@@ -13,7 +13,7 @@
         % events_templ = get_json_template('efys_events.jsonc');
            
         % Template ephys metadata
-        ephys_json = get_json_template('ephys_metadata.jsonc');
+        ephys_json = get_json_template('template_ephys.jsonc');
         
         %retrieve info on setup and device
         setup_bids = getSetup( sess_meta.setup );

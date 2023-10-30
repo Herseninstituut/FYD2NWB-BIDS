@@ -49,7 +49,7 @@ writetable(ProbeTbl, fullfile(dataset_folder, 'probes.tsv'), ...
 %% Create dataset_description.json file
 
 % Get the template
-dd = get_json_template('dataset_description_template.jsonc');
+dd = get_json_template('template_dataset_description.jsonc');
 
 % Fill some values
 dd.Name = dataset;
@@ -71,7 +71,7 @@ fclose(fid);
 %% Create table for the _sessions.json file
 
 % This will be filled when we go through each session
-SessStructArray = struct('sessionid', [], 'session_quality', [], 'number_of_trials', [], 'comment', []);
+SessArray = struct('sessionid', [], 'session_quality', [], 'number_of_trials', [], 'comment', []);
 
 
 %% Create the sub and sess folders, copy and rename files
@@ -81,16 +81,16 @@ for i = 1:length(sess_meta)
     if strcmp(sess_meta(i).setup, 'Gaia')
         % this conversion script is only for the 2photon data
         % for the neurolabware system, scanbox-YETI
-        SessStructArray(i) = gen_2P_bids(sess_meta(i), dataset_folder);
+        SessArray(i) = gen_2P_bids(sess_meta(i), dataset_folder);
         
     elseif contains(sess_meta(i).setup, 'MonkeyLab')
         % Conversion script for Blackrock data
-        SessStructArray(i) = gen_Ephys_bids(sess_meta(i), dataset_folder);
+        SessArray(i) = gen_Ephys_bids(sess_meta(i), dataset_folder);
     end
 end
 
 %% Write sessions table
-    SessTbl = struct2table(SessStructArray);
+    SessTbl = struct2table(SessArray);
     writetable(SessTbl, fullfile(dataset_folder, 'sessions.tsv'), ...
        'FileType', 'text', ...
        'Delimiter', '\t');
