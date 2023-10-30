@@ -1,3 +1,4 @@
+// Use this template to fit your needs, you can comment any fields that you do not use.
 {
   "ChannelId":"", // Unique identifier of the channel, only containing letters and numbers. 
   "ContactId":"", //The label must correspond to an entry in the _contacts.tsv or be n/a
