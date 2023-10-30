@@ -6,7 +6,7 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
         
         
         %Predefined parameter fields for 2 photon imaging
-        multiphoton_json = get_json_template('2p_imaging.jsonc');
+        multiphoton_json = get_json_template('template_2p_imaging.jsonc');
         %retrieve info on setup and device
         setup = getSetup( sess_meta.setup );
        
@@ -53,7 +53,7 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
             multiphoton.sampling_frequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
             multiphoton.pixel_dimensions = [info.Shape(1) info.Shape(2)];
             multiphoton.channels = info.Shape(3);
-            multiphoton.recording_duration = ceil(info.max_idx / session.SamplingFrequency);
+            multiphoton.recording_duration = ceil(info.max_idx / multiphoton.sampling_frequency);
             multiphoton.number_of_frames = info.max_idx;
             
             % Also retrieve the events and create an events.tsv file
@@ -62,8 +62,8 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
                'FileType', 'text', ...
                'Delimiter', '\t');
            
-           multiphoton.number_of_trials = length(Events); %This may need to be validated
-           Sess.number_of_trials = length(Events);
+           multiphoton.number_of_trials = height(Events); %This may need to be validated
+           Sess.number_of_trials = height(Events);
            
         catch
             disp(['no sbx info for session: ' sess_meta.sessionid])

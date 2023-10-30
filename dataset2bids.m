@@ -28,12 +28,19 @@ my_savepath = 'I:\Users\togt\Documents\temp\BIDS';
 %% SELECT YOUR DATASET!!!
 % getting metadata for all sessions from FYD, this returns a table with fields 
 % url, subject, condition, stimulus, date, setup for each recording session
+
+% Example ephys dataset 
 project='Muckli_reboot';
 dataset='Passive_fixation';
 subject='Lick';
-sess_meta = getSessions(project=project, dataset=dataset, subject=subject);
+sess_meta = getSessions(project, dataset, subject);
 dset_meta = getDataset( project, dataset );
 
+% Example multi_photon dataset 
+% project='GluA3_VR';
+% dataset='KOinV1PV_2P';
+% sess_meta = getSessions(project, dataset);
+% dset_meta = getDataset( project, dataset );
 
 %% Create the dataset folder
 
@@ -66,12 +73,14 @@ dd = get_json_template('template_dataset_description.jsonc');
 dd.name = dataset;
 dd.license = 'CC BY-NC-SA 4.0';
 dd.authors = dset_meta.author;
-dd.institution_department_name = 'Vision and Cognition'; %'Molecular Visual Plasticity';
+dd.institution_department_name = 'Molecular Visual Plasticity'; % 'Vision and Cognition'; %
 dd.institution_name = 'Netherlands Institute for Neuroscience';
 dd.institution_address = 'Meibergdreef 47, 1105BA Amsterdam, The Netherlands';
 dd.dataset_short_description = [ dataset ': '  dset_meta.shortdescr ', in project ' project ];
 dd.dataset_description = dset_meta.longdescr;
-dd.dataset_type="derived";
+dd.dataset_type="raw";
+dd.generated_by.name = 'FYD2BIDS';
+dd.generated_by.version = 'n/a';
 
 % Save the dataset descriptor to a json file          
 txtO = jsonencode(dd);
