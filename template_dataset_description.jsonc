@@ -1,27 +1,27 @@
 // Use this template to fit your needs, you can comment any fields that you do not use.
 {
-    "Name": "",
-    "BIDSVersion": "1.8.0",
-    "HEDVersion": "8.2.0",
-    "DatasetType": "",
-    "License": "",
-    "Authors": [
+    "name": "",
+    "BIDSversion": "1.8.0",
+    "HEDversion": "8.2.0",
+    "dataset_type": "",
+    "license": "",
+    "authors": [
       "",
       "",
       ""
     ],
-    "Acknowledgements": "",
-    "HowToAcknowledge": "",
-    "Funding": [
+    "acknowledgements": "",
+    "how_to_acknowledge": "",
+    "funding": [
       "",
       "",
       ""
     ],
-    "EthicsApprovals": [""],
-    "ReferencesAndLinks": [
+    "ethics_approvals": [""],
+    "references_and_links": [
       "",
       "",
       ""
     ],
-    "DatasetDOI": "doi:"
+    "datasetDOI": "doi:"
   }
