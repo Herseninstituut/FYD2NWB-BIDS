@@ -1,4 +1,4 @@
-function bids_struct = convertbidscompliant(bids_struct, fyd_struct)
+function bids_struct = makebidscompliant(bids_struct, fyd_struct)
 
 %In the FYD bids database the fields are in snake case
 % For BIDS the fields are now in Pascal case

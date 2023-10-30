@@ -16,15 +16,16 @@
         ephys_json = get_json_template('template_ephys.jsonc');
         
         %retrieve info on setup and device
-        setup_bids = getSetup( sess_meta.setup );
-     
-        % Convert from database fields to BIDS prescribed fields 
-        % (These might change in the future)
-        ephys_json = makebidscompliant(ephys_json, setup_bids);
-        
-        ephys_json.Type = types.ChannelType{1}; % Extracellular neuronal recording.
-        ephys_json.TaskName = sess_meta.stimulus;      
-        ephys_json.BodyPart = "Striate Cortex (V1)";
+        setup = getSetup( sess_meta.setup );
+        %copy values to corresponding fields
+        flds = fields(setup);
+        for i = 1: length(flds)
+            ephys_json.(flds{i}) = setup.(flds{i});
+        end
+   
+        ephys_json.type = types.ChannelType{1}; % Extracellular neuronal recording.
+        ephys_json.task_name = sess_meta.stimulus;      
+        ephys_json.body_part = 'Striate Cortex (V1)'; % this should be retrieved from FYD!!!!
         
         % prepare the creation of folders 
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
@@ -90,8 +91,8 @@
         
         %Read metadata related to the task from the FYD database
         Task_meta = getStimulus(sess_meta.stimulus);
-        ephys_json.TaskName = Task_meta.stimulusid;
-        ephys_json.TaskDescription = Task_meta.shortdescr;
+        ephys_json.task_name = Task_meta.stimulusid;
+        ephys_json.task_description = Task_meta.shortdescr;
 
         %Write to json file
         f = fopen([bids_prenom '_ephys.json'], 'w' ); 

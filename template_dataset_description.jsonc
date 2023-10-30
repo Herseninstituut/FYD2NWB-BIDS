@@ -1,27 +1,38 @@
-// Use this template to fit your needs, you can comment any fields that you do not use.
+// Use this template to fit your needs, you can comment out any fields that you do not use.
 {
-    "name": "",
-    "BIDSversion": "1.8.0",
-    "HEDversion": "8.2.0",
-    "dataset_type": "",
-    "license": "",
-    "authors": [
-      "",
-      "",
-      ""
-    ],
-    "acknowledgements": "",
-    "how_to_acknowledge": "",
-    "funding": [
-      "",
+    "name": "", // Required - Name of the dataset.
+    "BIDSversion": "1.8.0", // Required - The version of the BIDS standard that was used.
+    "HEDversion": "8.2.0", // If HED tags are used: The version of the HED schema used to validate HED tags for study. 
+    "DatasetLinks": "",  // Used to map a given <dataset-name> from a BIDS URI of the form bids:<dataset-name>:path/within/dataset to a local or remote location.
+    "dataset_type": "", // he interpretation of the dataset. For backwards compatibility. Must be one of: "raw", "derivative".
+    "license": "", // The license for the dataset. 
+    "authors": [ // List of individuals who contributed
       "",
       ""
     ],
-    "ethics_approvals": [""],
-    "references_and_links": [
-      "",
+    "acknowledgements": "", // Text acknowledging contributions 
+    "how_to_acknowledge": "", // Text containing instructions on how researchers using this dataset should acknowledge the original authors.
+    "funding": [            // List of sources of funding (grant numbers).
       "",
       ""
     ],
-    "datasetDOI": "doi:"
+    "ethics_approvals": [""], // List of ethics committee approvals of the research protocols and/or protocol identifiers.
+    "references_and_links": [  // List of references to publications that contain information on the dataset.
+      "",
+      ""
+    ],
+    "datasetDOI": "doi:", //The Digital Object Identifier of the dataset 
+    "generated_by": [  // Used to specify provenance of the dataset.
+      {
+        "Name": "",
+        "Version": "",
+        "Container": {
+          "Type": "",
+          "Tag": ""
+        }
+      }
+    ],
+    "source_datasets": [ // Used to specify the locations and relevant attributes of all source datasets.
+      { "URL": "", "version": "" }
+    ]  
   }

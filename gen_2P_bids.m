@@ -8,12 +8,13 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
         %Predefined parameter fields for 2 photon imaging
         multiphoton_json = get_json_template('2p_imaging.jsonc');
         %retrieve info on setup and device
-        setup_bids = getSetup( sess_meta.setup );
-        
-        % Convert from database fields to BIDS prescribed fields 
-        % (These might change in the future)
-        multiphoton = makebidscompliant(multiphoton_json, setup_bids);
-        
+        setup = getSetup( sess_meta.setup );
+       
+        %copy values to corresponding fields
+        flds = fields(setup);
+        for i = 1: length(flds)
+            multiphoton_json.(flds{i}) = setup.(flds{i});
+        end      
         
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
         session_folder = fullfile(subject_folder, ['sess-' sess_meta.sessionid] );
@@ -44,16 +45,16 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
             sbxread(fpath, 0, 1);
             scanmode = info.scanmode;
             if scanmode == 1
-                session.ImageAcquisitionProtocol = 'unidirectional';
+                session.image_acquisition_protocol = 'unidirectional';
             else 
-                session.ImageAcquisitionProtocol = 'bidirectional';
+                session.image_acquisition_protocol = 'bidirectional';
                 scanmode = 2;
             end
-            multiphoton.SamplingFrequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
-            multiphoton.PixelDimensions = [info.Shape(1) info.Shape(2)];
-            multiphoton.Channels = info.Shape(3);
-            multiphoton.RecordingDuration = ceil(info.max_idx / session.SamplingFrequency);
-            multiphoton.NumberOfFrames = info.max_idx;
+            multiphoton.sampling_frequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
+            multiphoton.pixel_dimensions = [info.Shape(1) info.Shape(2)];
+            multiphoton.channels = info.Shape(3);
+            multiphoton.recording_duration = ceil(info.max_idx / session.SamplingFrequency);
+            multiphoton.number_of_frames = info.max_idx;
             
             % Also retrieve the events and create an events.tsv file
             Events = array2table([info.frame info.line info.event_id], 'VariableNames', { 'frame', 'line', 'event_id' });
@@ -61,7 +62,7 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
                'FileType', 'text', ...
                'Delimiter', '\t');
            
-           multiphoton.NumberOfTrials = length(Events); %This may need to be validated
+           multiphoton.number_of_trials = length(Events); %This may need to be validated
            Sess.number_of_trials = length(Events);
            
         catch
@@ -70,8 +71,8 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
 
         %Read metadata related to the task from the FYD database
         Task_meta = getStimulus(sess_meta.stimulus);
-        multiphoton.TaskName = Task_meta.stimulusid;
-        multiphoton.TaskDescription = Task_meta.shortdescr;
+        multiphoton.task_name = Task_meta.stimulusid;
+        multiphoton.task_description = Task_meta.shortdescr;
 
         %Write to json file
         f = fopen([bids_prenom '_multiphoton.json'], 'w' ); 

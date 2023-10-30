@@ -57,29 +57,21 @@ fclose(fid);
 % tbl = struct2cell(sub_metadata);
 % writecell(tbl,fullfile(dataset_folder, 'participants.tsv'), 'filetype','text', 'delimiter','\t')
 
-%% Create the Probes tsv file, retrieve data from bids.Probes table
-
-probesArray = fetch(bids.Probes & ( 'subject="B01"' | 'subject="L01"'), '*');
-ProbeTbl = struct2table(probesArray);
-writetable(ProbeTbl, fullfile(dataset_folder, 'probes.tsv'), ...
-       'FileType', 'text', ...
-       'Delimiter', '\t');
-
 %% Create dataset_description.json file
 
 % Get the template
 dd = get_json_template('template_dataset_description.jsonc');
 
-% Fill some values
-dd.Name = dataset;
-dd.License = 'CC BY-NC-SA 4.0';
-dd.Authors = dset_meta.author;
-dd.InstitutionDepartmentName = 'Vision and Cognition'; %'Molecular Visual Plasticity';
-dd.InstitutionName = 'Netherlands Institute for Neuroscience';
-dd.InstitutionAddress = 'Meibergdreef 47, 1105BA Amsterdam, The Netherlands';
-dd.DatasetShortDescription = [ dataset ': '  dset_meta.shortdescr ', in project ' project ];
-dd.DatasetDescription = dset_meta.longdescr;
-dd.DatasetType="preprocessed";
+% Fill some values using metadata from the FYD database: dset_meta
+dd.name = dataset;
+dd.license = 'CC BY-NC-SA 4.0';
+dd.authors = dset_meta.author;
+dd.institution_department_name = 'Vision and Cognition'; %'Molecular Visual Plasticity';
+dd.institution_name = 'Netherlands Institute for Neuroscience';
+dd.institution_address = 'Meibergdreef 47, 1105BA Amsterdam, The Netherlands';
+dd.dataset_short_description = [ dataset ': '  dset_meta.shortdescr ', in project ' project ];
+dd.dataset_description = dset_meta.longdescr;
+dd.dataset_type="derived";
 
 % Save the dataset descriptor to a json file          
 txtO = jsonencode(dd);
@@ -95,14 +87,17 @@ SessArray = struct('sessionid', [], 'session_quality', [], 'number_of_trials', [
 
 %% Create the sub and sess folders, copy and rename files
 %Create the basic session.json file to add to each subfolder
+data_type = ''; % Recording type
 
 for i = 1:length(sess_meta)
     if strcmp(sess_meta(i).setup, 'Gaia')
+        data_type = 'multi_photon';
         % this conversion script is only for the 2photon data
         % for the neurolabware system, scanbox-YETI
         SessArray(i) = gen_2P_bids(sess_meta(i), dataset_folder);
         
     elseif contains(sess_meta(i).setup, 'MonkeyLab')
+        data_type = 'ephys';
         % Conversion script for Blackrock data
         SessArray(i) = gen_Ephys_bids(sess_meta(i), dataset_folder);
     end
@@ -114,4 +109,12 @@ end
        'FileType', 'text', ...
        'Delimiter', '\t');
 
-    
+%% Create the Probes tsv file, retrieve data from bids.Probes table
+if strcmp(data_type, 'ephys')
+    probesArray = fetch(bids.Probes & ( 'subject="B01"' | 'subject="L01"'), '*');
+    ProbeTbl = struct2table(probesArray);
+    writetable(ProbeTbl, fullfile(dataset_folder, 'probes.tsv'), ...
+           'FileType', 'text', ...
+           'Delimiter', '\t');
+end  
+   
