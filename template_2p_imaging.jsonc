@@ -1,0 +1,26 @@
+{
+  "InstitutionName": "",
+  "InstitutionAdress": "",
+  "InstitutionDepartmentName": "",
+  "Manufacturer": "",
+  "ManufacturersModelName": "",
+  "DeviceSerialNumber": "",
+  "Firmware": "",
+  "RecordingSetup": "",  //Name of multiphoton setup
+  "SoftwareName" :"",
+  "SoftwareVersions": "",
+  "ScanningFrequency": [],
+  "PixelSize": [],
+  "PixelSizeUnits": "",
+  "PixelDimensions": [],
+  "Objective": "",
+  "NumericalAperture": [],
+  "Magnification": [],
+  "ImageAcquisitionProtocol": "",
+  "TaskName": "",
+  "TaskDescription": "",
+  "Channels": [],
+  "SamplingFrequency": [],
+  "RecordingDuration": [],
+  "NumberOfFrames": []
+}

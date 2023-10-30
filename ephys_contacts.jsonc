@@ -1,0 +1,19 @@
+{
+  "ContactId": "",
+  "ProbeId": "",
+  "x": [],
+  "y": [],
+  "z": [],
+  "PhysicalUnit": "",
+  "Impedance": "",
+  "ImpedanceUnit": "",
+  "ShankId": "",
+  "ContactSize": "",
+  "ContactShape": "",
+  "material": "",
+  "location": "",
+  "Insulation": "",
+  "pipette_solution": "",
+  "internal_pipette_diameter": "",
+  "external_pipette_diameter ": ""
+}

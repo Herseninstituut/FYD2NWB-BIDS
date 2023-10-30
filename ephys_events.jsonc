@@ -1,0 +1,8 @@
+{
+    "Onset": [], // Onset (in seconds) of the event, measured from the beginning of the acquisition of the first data point stored in the corresponding task data file.
+    "Duration": [], // Duration of the event (measured from onset) in seconds. 
+    "TrialType": "", // Primary categorisation of each trial to identify them as instances of the experimental conditions. 
+    "Value": [], // Marker value associated with the event (for example, the value of a TTL trigger that was recorded at the onset of the event)
+    "ResponseTime": [], // Response time measured in seconds.
+    "StimFile": "" // Represents the location of the stimulus file (such as an image, video, or audio file) presented at the given onset time. 
+}
