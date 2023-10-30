@@ -14,6 +14,8 @@ The main routine that provides a starting point and example is dataset2bids.m. S
 to be associated with ephys differs from that of fMRI or 2P imaging, there are different subroutines for these recording types.
 
 PREREQUISITES  
+**Every experiment in your dataset has a _session.json file tag, to make it findable and machine readable.** 
+
 Install the Datajoint toolbox for matlab :  
 In matlab => APPs => Get More APPS => search for Datajoint => ADD Datajoint as Addon.
   
