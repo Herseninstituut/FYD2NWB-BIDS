@@ -1,4 +1,22 @@
-%% data_to_bids
+%% dataset2bids
+% This is an example script that illustrates how you can retrieve metadata
+% and generate a BIDS compliant dataset in the folder of your choice.
+% 1. It first selects and retrieves all the urls to the sessions you want to
+% incorporate in your dataset.
+% 2. Then it creates global metadata files, creates folders with bids
+% compliant names, copies and renames datafiles (in this example they are
+% empty for test purposes) and adds metadata to each subfolder.
+
+% Basic metadata can be retrieved from the FYD database. This depends on
+% how well you have added documentation through the WebApp.
+% Nevertheless, you will still need to retrieve extra metadata from the 
+% log files you create with your data with custom scripts.
+
+% Two subroutines were added in this repo as examples of custom subroutines 
+% to retrieve metadata, one for ephys (gen_ephys_bids.m) and one for 2photon
+% data (gen_2P_bids.m)
+% This script will choose one or the other depending on the setup
+% identifier ('Gaia' => 2P, 'MonkeyLab' => ephys)
 
 
 %% Initialize Datajoint for my lab and retrieve metadata from the FYD database
@@ -39,7 +57,8 @@ fclose(fid);
 % tbl = struct2cell(sub_metadata);
 % writecell(tbl,fullfile(dataset_folder, 'participants.tsv'), 'filetype','text', 'delimiter','\t')
 
-%% Create the Probes tsv file
+%% Create the Probes tsv file, retrieve data from bids.Probes table
+
 probesArray = fetch(bids.Probes & ( 'subject="B01"' | 'subject="L01"'), '*');
 ProbeTbl = struct2table(probesArray);
 writetable(ProbeTbl, fullfile(dataset_folder, 'probes.tsv'), ...
