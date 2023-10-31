@@ -104,8 +104,10 @@
     %% A simple way to create the channels.tsv (or probes.tsv, contacts.tsv)
     
     % This retrieves all fields, you could also use the template to retrieve a subset of the fields
+    % Since they will be subject dependent, select the channels, probes
+    % associated with a subject
     ChannArray = fetch(bids.Channels & 'subject="L01"', '*');
-    % you might want to remove empty of redundant fields
+    % you might want to remove empty or redundant fields
     ChannArray = rmfield(ChannArray, {'subject', 'contact_id', 'channel_name', 'recording_mode'});
     
     ChannelTbl = struct2table(ChannArray);
