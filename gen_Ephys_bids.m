@@ -6,8 +6,9 @@
         % Output for the sessions table in tsv format
         Sess = struct('sessionid', sess_meta.sessionid, 'session_quality', [], 'number_of_trials', [], 'comment', []);
         
-        % Template for channels array
+        % Template for channels array (adapt efys_channels to your needs)
         % chan_templ = get_json_template('efys_channels.jsonc'); 
+        
         
         % Template ephys events
         % events_templ = get_json_template('efys_events.jsonc');
@@ -51,7 +52,7 @@
         end
 
         
-        %% this is datset specific  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% this is datset specific  please adapt %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         %Create json file for this session with relevent metadata
         StreamTypes = {'MUAe', 'LFP', 'SpikeTrain', 'Psth10'};
@@ -90,9 +91,9 @@
         Sess.number_of_trials = trials;
         
         %Read metadata related to the task from the FYD database
-        Task_meta = getStimulus(sess_meta.stimulus);
-        ephys_json.task_name = Task_meta.stimulusid;
-        ephys_json.task_description = Task_meta.shortdescr;
+        task_meta = getStimulus(sess_meta.stimulus);
+        ephys_json.task_name = task_meta.stimulusid;
+        ephys_json.task_description = task_meta.shortdescr;
 
         %Write to json file
         f = fopen([bids_prenom '_ephys.json'], 'w' ); 
@@ -100,3 +101,23 @@
         fwrite(f, txtO);
         fclose(f);
         
+    %% A simple way to create the channels.tsv (or probes.tsv, contacts.tsv)
+    
+    % This retrieves all fields, you could also use the template to retrieve a subset of the fields
+    ChannArray = fetch(bids.Channels & 'subject="L01"', '*');
+    % you might want to remove empty of redundant fields
+    ChannArray = rmfield(ChannArray, {'subject', 'contact_id', 'channel_name', 'recording_mode'});
+    
+    ChannelTbl = struct2table(ChannArray);
+    writetable(ChannelTbl, [bids_prenom '_channels.tsv'], ...
+           'FileType', 'text', ...
+           'Delimiter', '\t');  
+       
+   % Create the Probes tsv file, retrieve data from bids.Probes table
+    probesArray = fetch(bids.Probes & 'subject="L01"', '*');
+    ProbeTbl = struct2table(probesArray);
+    writetable(ProbeTbl, [bids_prenom '_probes.tsv'], ...
+           'FileType', 'text', ...
+           'Delimiter', '\t');
+
+       

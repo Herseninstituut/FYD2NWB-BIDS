@@ -12,7 +12,7 @@ if strcmp(setup_meta.type, 'ephys')
     Sel = ['recording_setup= "' setupname '"'];
     setup_bids = fetch(query & Sel, '*' );
     
-elseif strcmp(setup_meta.type, '2photon')
+elseif strcmp(setup_meta.type, 'multi_photon')
     query = bids.MultiPhoton;  %ephys table in bids general database
     Sel = ['recording_setup= "' setupname '"'];
     setup_bids = fetch(query & Sel, '*' );

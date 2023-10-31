@@ -46,7 +46,7 @@ dset_meta = getDataset( project, dataset );
 
 setup = unique({ sess_meta(:).setup });
 if length(setup) > 1
-    waitfor(warndlg(['More than one setup; ' strjoin(setup)], 'Warning'))
+    waitfor(warndlg(['More than one setup; ' strjoin(F)], 'Warning'))
 end
 recording_type = getSetupType(setup{1});
 
