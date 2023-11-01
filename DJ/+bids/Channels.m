@@ -2,7 +2,7 @@
 # channels table for BIDS channels tsv
   channel_id            : varchar(60)  # Unique identifier of the channel, only containing letters and numbers. 
   ---
-  subject               : varchar(50)  # Subject identifier
+  subject               : varchar(50) not null  # Subject identifier
   contact_id            : varchar(30)  # The label must correspond to an entry in the _contacts.tsv or be n/a
   type                  : varchar(30)  # Type of the channel, e.g. extracellular signal, intracellular signal, synchronization signal. 
   unit                  : varchar(30)  # Physical unit of the value represented in this channel, e.g. V for Volt,
