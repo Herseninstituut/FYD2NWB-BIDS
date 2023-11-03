@@ -1,22 +1,27 @@
-# FYD2BIDS
+# FYD2BIDS  
 This is a set of matlab routines to help users convert their datasets to a BIDS compliant format.  
-Converting a dataset to BIDS involves :  
+Converting a dataset to BIDS involves: 
 . creating folders that are BIDS compliant  
 . copying and changing the names of your data files  
-. generating metadata to accompany the data in the form of json sidecar files and tables in tab separated value format (.tsv)  
+. generating metadata to accompany the data in the form of json sidecar files and tables in tab separated value format (.tsv) 
+[See BIDS Specification](https://bids.neuroimaging.io/specification.html)   
 
-tsv files for BIDS ephys are for example: 
+For Electrophysiology BIDS specifies various tsv files: 
 channels.tsv, contacts,tsv, probes.tsv, events.tsv, subjects.tsv  
 
-To help users understand what needs to be stored, jsonc template files are included with explanatory comments to show what fields need to be filled for the official BIDS metadata schema.  
-With __get_json_template__ the jsonc files can be converted to a matlab data structure and used to create structure arrays, that later can be converted and exported to tsv spreadsheet files. The jsonc files can further be adapted to your needs, since some fields may not be applicable to your data. Simply comment out the fields you don't use.
+To help users understand what needs to be stored in these files, jsonc template files are included with explanatory comments to show the required and recommended fields that need to be provided to comply with the official BIDS metadata schema.  
+With __get_json_template__ the jsonc files can be converted to a matlab data structure and used to create structure arrays. Later these can be converted and exported to tsv spreadsheet files or json files. The jsonc files can easily be adapted by commenting out the fields you don't need or that are not be applicable to your data.
 
-The main routine that provides a starting point and example is __dataset2bids.m__. As you can see, some important metadata can be directly generated from the FYD database. Other details that need to be included as metadata may either be generated from log files you save with your experiments or metadata that you have saved separately and which are specific for the methods you are using.
-For example details about channels, contacts and probes do not change on every ephys experiment, so you could save the contents of a table with details about every channel to the **bids** database on the FYD server. There is a __BIDS_example_channels__ , ___contacts__ and __probes__ that illustrates how you may generate and store this metadata using Datajoint. The examples also show you how to create tsv files.
+The routines developed here for converting your data rely heavily on the use of the Datajoint toolbox, which you can install as an addon in matlab (See below for instructions). The nice thing about Datajoint is that it makes it super easy to interact with a MSQL database server. This applies to both retrieving data, as well as adding and updating data in various tables.
+[Datajoint Documentation](https://datajoint.github.io/datajoint-docs-original/matlab/)
 
-Different recording techniques require different metadata. This is supported in FYD. To register this metadata, select a BIDS type (ephys, multi_photon, fMRI) in the setup tab on the Webapp's editing interface and then press (EDIT BIDS INPUT). BIDS meta data for a particular recording type can be entered here. This entry can later be used to generate a __(ephys, multiphoton or fMRI).json__ file that needs to be saved with each session in your BIDS dataset. Since different users may use the same setup, the great thing is, they can all make use of this same entry when they generate their own BIDS dataset.
+The main routine that provides a starting point and example is __dataset2bids.m__. As you can see, basic metadata can be directly retrieved from the FYD database using Datajoint. Other metadata details that need to be included may either be generated from log files you save with your experiments or metadata that you have saved separately and which are specific for the methods you are using. This means you will have to do some scripting yourself, because only you understand how to retrieve this metadata from your experimental files.  
 
-Based on their recording_type two example subroutines have been included for electrophysiology and 2photon data.
+For example details about channels, contacts and probes for electrophysiology do not change on every experiment. Ideally you would like to save this metadata once and be able to retrieve it any time you need it. To accomodate this, tables for channels, contacts and probes have been defined in a new database called __bids__ on the MYSQL server. So now you can save the contents of tables with the details about every channel, contact and probe for later use. There is an __Examples_BIDS_Datajoint__ mfile that illustrates how you generate and store this metadata using Datajoint. The examples also show you how to create tsv files.
+
+Different recording techniques require different metadata. This is supported in FYD. To register what type of recording technique you are using, select a BIDS type (ephys, multi_photon, fMRI) in the **setup tab** on the FYD Webapp's editing interface and then press `(EDIT BIDS INPUT)`. BIDS meta data for a particular recording type can be entered here. This entry can later be used to generate an __(ephys, multiphoton or fMRI).json__ file that needs to be saved with each session in your BIDS dataset. Since different users may use the same setup, the great thing is, they can all make use of this same entry when they generate their own BIDS dataset.
+
+Based on their recording_type two example subroutines have been included; one for electrophysiology and one for 2photon data.
 
 #### PREREQUISITES  
 1.  **Every experiment in your dataset needs to have a _session.json file tag, to make it findable and machine readable.**  
