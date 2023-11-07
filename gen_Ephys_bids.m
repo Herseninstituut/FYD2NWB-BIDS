@@ -1,48 +1,43 @@
- function Sess = gen_Ephys_bids(sess_meta, dataset_folder)
+ function Sess = gen_Ephys_bids(sess_meta, ephys_json, dataset_folder)
          
-        % recording type
-        types = get_json_template('ephys_types.jsonc');
-
+ % INPUT: sess_meta retrieved info from FYD database for this session;
+ %        ephys_json BIDS metadata prefilled for this session  
+ %        Main folder where dataset is going to be saved.
+ 
+ % OUTPUT: This script creates folders with BIDS compliant names, renames
+ % the data files to BIDS compliant names, ands adds metadata files
+ % required by BIDS
+ 
         % Output for the sessions table in tsv format
         Sess = struct('sessionid', sess_meta.sessionid, 'session_quality', [], 'number_of_trials', [], 'comment', []);
-        
+         
         % Template for channels array (adapt efys_channels to your needs)
         % chan_templ = get_json_template('efys_channels.jsonc'); 
         
-        
         % Template ephys events
         % events_templ = get_json_template('efys_events.jsonc');
-           
-        % Template ephys metadata
-        ephys_json = get_json_template('template_ephys.jsonc');
-        
-        %retrieve info on setup and device
-        setup = getSetup( sess_meta.setup );
-        %copy values to corresponding fields
-        flds = fields(setup);
-        for i = 1: length(flds)
-            ephys_json.(flds{i}) = setup.(flds{i});
-        end
-   
-        ephys_json.type = types.ChannelType{1}; % Extracellular neuronal recording.
-        ephys_json.task_name = sess_meta.stimulus;      
-        ephys_json.body_part = 'Striate Cortex (V1)'; % this should be retrieved from FYD!!!!
-        
-        % prepare the creation of folders 
+    
+        % prepare the creation of subject and session folders with BIDS compliant names
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
         session_folder = fullfile(subject_folder, ['sess-' sess_meta.sessionid] );
         mkdir(session_folder);
 
-        %Create BIDS compliant name
+        %Create BIDS compliant session name
         bids_prenom = fullfile(session_folder, ['sub-' sess_meta.subject '_sess-' sess_meta.sessionid '_task-' sess_meta.stimulus ]);
                 
-        % retrieve all files associated with this recording session
-        % Here each file should contain the FYD sessionid or this will not work
-        % So this doesn't work for Paolos files we simply need to select all the files in teh folder!!
+        % Retrieve all files associated with this recording session
+        % Here each file should either contain the FYD sessionid in it's name 
+        % or the folder should contain only files that are associated with
+        % one session. This is what makes data machine readable!!!!
+        
+        % In this case we simply select all the files in a folder, 
+        % rename them according to BIDS and copy them to their destination folder!!
+        % (not a real copy here, simply created empty files with the correct name)
         searchpath = [sess_meta.url '\*'];
         filesIn = dir(searchpath);
         for j = 1:length(filesIn)
-            if ~filesIn(j).isdir && ~contains(filesIn(j).name, '_session') % Ignore _session.json files, we have retrieved this metadata already
+            % Ignore _session.json files, we have retrieved this metadata already
+            if ~filesIn(j).isdir && ~contains(filesIn(j).name, '_session') 
                 %get remainder of filename + extention without sessionid
                 ext = erase(filesIn(j).name, sess_meta.sessionid);
                 %create the file and format the filename according to BIDS
@@ -52,9 +47,9 @@
         end
 
         
-        %% this is datset specific  please adapt %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% this is datset specific so you will need to adapt this %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %Create json file for this session with relevent metadata
+        %Add relevant metadata for this session's ephys.json file
         StreamTypes = {'MUAe', 'LFP', 'SpikeTrain', 'Psth10'};
        
         %Data file url
@@ -85,7 +80,6 @@
             end      
         end
         
-    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         %update record for sessions
         Sess.number_of_trials = trials;
@@ -101,7 +95,8 @@
         fwrite(f, txtO);
         fclose(f);
         
-    %% A simple way to create the channels.tsv (or probes.tsv, contacts.tsv)
+    %% A simple way to create the channels.tsv (or probes.tsv, contacts.tsv) 
+    % if they where previously saved on tables within the bids database
     
     % This retrieves all fields, you could also use the template to retrieve a subset of the fields
     % Since they will be subject dependent, select the channels, probes

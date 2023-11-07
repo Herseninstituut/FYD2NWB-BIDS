@@ -3,9 +3,10 @@
 % and generate a BIDS compliant dataset in the folder of your choice.
 % 1. It first selects and retrieves all the urls to the sessions you want to
 % incorporate in your dataset.
+
 % 2. Then it creates global metadata files, creates folders with bids
 % compliant names, copies and renames datafiles (in this example they are
-% empty for test purposes) and adds metadata to each subfolder.
+% empty for illustration purposes) and adds metadata to each subfolder.
 
 % Basic metadata can be retrieved from the FYD database. This depends on
 % how well you have added documentation through the WebApp.
@@ -20,20 +21,26 @@
 
 
 %% Initialize Datajoint for your lab and retrieve metadata from the FYD database
+%Make sure to adapt this file to access the database of your lab
 initDJ
 
-% Where to store
+% Choose where to store your dataset
 my_savepath = uigetdir();
 
 %% SELECT YOUR DATASET!!!
 % getting metadata for all sessions from FYD, this returns a table with fields 
 % url, subject, condition, stimulus, date, setup for each recording session
 
-% Example ephys dataset 
+% Example ephys dataset from Paolo Papale, please try this with your own
+% dataset
 project='Muckli_reboot';
 dataset='Passive_fixation';
 subject='Lick';
+% gets urls to data folders, using DataJoint (See Examples_BIDS_Datajoint)
+% With this function you can also select based on excond(condition), stimulus,
+% setup, date
 sess_meta = getSessions(project=project, dataset=dataset, subject=subject);
+% gets metadata about the dataset, from Dataset and Project tables
 dset_meta = getDataset( project, dataset );
 
 % Example multi_photon dataset 
@@ -42,17 +49,9 @@ dset_meta = getDataset( project, dataset );
 % sess_meta = getSessions(project=project, dataset=dataset);
 % dset_meta = getDataset( project, dataset );
 
-%% recording type determines the type of metadata that you will need to include
-
-setup = unique({ sess_meta(:).setup });
-if length(setup) > 1
-    waitfor(warndlg(['More than one setup; ' strjoin(setup)], 'Warning'))
-end
-recording_type = getSetupType(setup{1});
-
 %% Create the dataset folder
 
-%Create dataset folder
+%Create dataset folder, in selected path, with name of dataset
 dataset_folder = fullfile(my_savepath, dataset);
 mkdir(dataset_folder);
 
@@ -60,8 +59,12 @@ mkdir(dataset_folder);
 %% Create participants.json
 
 subjects = unique({ sess_meta(:).subject });
-%retrieve from FYD database
+%retrieve from FYD database, yourlab.Subjects
 sub_meta = getSubjects(subjects); %gets id, species, sex, birthdate, age
+
+%NOTE that we use jsonencode to convert a matlab structure array to json
+%formatted string. The a json file is created and the string is saved.
+%You can open the json file in a browser(mozilla) to verify it's contents
 txtO = jsonencode(sub_meta);
 fid = fopen(fullfile(dataset_folder, 'participants.json'), 'w');
 fwrite(fid, txtO);
@@ -74,7 +77,7 @@ fclose(fid);
 
 %% Create dataset_description.json file
 
-% Get the template
+% Get the template, comment the fields you don't use
 dd = get_json_template('template_dataset_description.jsonc');
 
 % Fill some values using metadata from the FYD database: dset_meta
@@ -96,24 +99,85 @@ fid = fopen(fullfile(dataset_folder, 'dataset_descriptor.json'), 'w');
 fwrite(fid, txtO);
 fclose(fid);
 
-%% Create table for the _sessions.json file
 
-% This will be filled when we go through each session
+%% recording type determines the type of metadata that you will need to include
+% Save recording type on the FYDS webApp, in the setup tab.
+
+setupid = unique({ sess_meta(:).setup });
+if length(setupid) > 1
+    waitfor(warndlg(['More than one setup; ' strjoin(setupid)], 'Warning'))
+end
+%We retrieve the setup type from the lab.Setups table
+setupid = setupid{1};
+recording_type = getSetupType(setupid);
+
+%% Ephys  Some metadata that will be constant over the whole dataset
+
+if contains(recording_type, 'ephys')
+    
+        
+        % ephys signal types
+        types = get_json_template('ephys_types.jsonc');
+                  
+        % Template ephys metadata
+        % Here also, you may need to comment out fields that are not
+        % appropriate or unknown for your dataset
+        ephys_json = get_json_template('template_ephys.jsonc');
+        
+        % Much of the metadata about the devices in a setup goes into the ephys.json file.
+        % Retrieve this info from the bids.Ephys and .Setups table
+        % The bids.Ephys table is BIDS compliant, and the field values can
+        % be directly copied to our ephys_json output structure. 
+        setup = getSetup( setupid );
+        %copy values to corresponding fields
+        flds = fields(setup);
+        for i = 1: length(flds)
+            ephys_json.(flds{i}) = setup.(flds{i});
+        end
+   
+        ephys_json.type = types.ChannelType{1}; % Extracellular neuronal recording in this dataset.   
+        ephys_json.body_part = 'Striate Cortex (V1)'; % this should be retrieved from FYD!!!!
+ 
+%% MULTIPHOTON metadata constant over dataset    
+elseif strcmp(recording_type, 'multi_photon')
+    
+        %Predefined parameter fields for 2 photon imaging
+        multiphoton_json = get_json_template('template_2p_imaging.jsonc');
+        %retrieve info on setup and device
+        setup = getSetup( setupid );
+       
+        %copy values to corresponding fields
+        flds = fields(setup);
+        for i = 1: length(flds)
+            multiphoton_json.(flds{i}) = setup.(flds{i});
+        end    
+ 
+end
+%% Create table for the _sessions.tsv file
+
+% This will be filled when we go through each session, (no template because
+% it only contains a few columns.
 SessArray = struct('sessionid', [], 'session_quality', [], 'number_of_trials', [], 'comment', []);
 
 
 %% Create the sub and sess folders, copy and rename files
-%Create the basic session.json file to add to each subfolder
+% Since we have a list of urls, representing each individual session, we can
+% now loop through them to create all the folders, copy and rename all the
+% files, and create the neccessay metadata tsv and json files.
+% Here either a multiphoton dataset or an ehpys subroutine is called for
+% each session based on the recording_type we got from the setup info.
+% You will need to write your own subroutine to access specific
+% experimental data. The example subroutines give some idea.
 
 for i = 1:length(sess_meta)
     if strcmp(recording_type, 'multi_photon')
         % this conversion script is only for the 2photon data
         % for the neurolabware system, scanbox-YETI
-        SessArray(i) = gen_2P_bids(sess_meta(i), dataset_folder);
+        SessArray(i) = gen_2P_bids(sess_meta(i), multiphoton_json, dataset_folder);
         
     elseif contains(recording_type, 'ephys')
         % Conversion script for Blackrock data
-        SessArray(i) = gen_Ephys_bids(sess_meta(i), dataset_folder);
+        SessArray(i) = gen_Ephys_bids(sess_meta(i), ephys_json, dataset_folder);
     end
 end
 

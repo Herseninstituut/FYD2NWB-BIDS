@@ -1,20 +1,9 @@
-function Sess = gen_2P_bids(sess_meta, dataset_folder)
+function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
         global info %% header info from imaging files
        
         % create to add to sessions tsv output table
         Sess = struct('sessionid', sess_meta.sessionid, 'session_quality', [], 'number_of_trials', [], 'comment', []);
-        
-        
-        %Predefined parameter fields for 2 photon imaging
-        multiphoton_json = get_json_template('template_2p_imaging.jsonc');
-        %retrieve info on setup and device
-        setup = getSetup( sess_meta.setup );
-       
-        %copy values to corresponding fields
-        flds = fields(setup);
-        for i = 1: length(flds)
-            multiphoton_json.(flds{i}) = setup.(flds{i});
-        end      
+  
         
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
         session_folder = fullfile(subject_folder, ['sess-' sess_meta.sessionid] );
@@ -45,9 +34,9 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
             sbxread(fpath, 0, 1);
             scanmode = info.scanmode;
             if scanmode == 1
-                session.image_acquisition_protocol = 'unidirectional';
+                multiphoton.image_acquisition_protocol = 'unidirectional';
             else 
-                session.image_acquisition_protocol = 'bidirectional';
+                multiphoton.image_acquisition_protocol = 'bidirectional';
                 scanmode = 2;
             end
             multiphoton.sampling_frequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
@@ -64,9 +53,11 @@ function Sess = gen_2P_bids(sess_meta, dataset_folder)
            
            multiphoton.number_of_trials = height(Events); %This may need to be validated
            Sess.number_of_trials = height(Events);
+           Sess.comment = 'Okay';
            
         catch
-            disp(['no sbx info for session: ' sess_meta.sessionid])
+            Sess.comment = 'No sbx info for this session';
+            % disp(['no sbx info for session: ' sess_meta.sessionid])
         end
 
         %Read metadata related to the task from the FYD database
