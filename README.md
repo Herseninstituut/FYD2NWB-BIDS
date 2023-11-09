@@ -1,7 +1,7 @@
 # FYD2BIDS  
 This is a set of Matlab routines to help NIN users automatically convert their datasets into the BIDS format. 
 
-The goal of this toolbox is to extract most of the relevant information from the FYD database (via the ____session.json___ files), thus requiring minimal input from NIN users. Thanks to these routines, that exploit FYD's metadata, you have all the flexibility on the user side, in terms of data managment - while the once painful process of reformatting the entire data in order to release it after publication, is accounted for by FYD2BIDS! The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging, and allows for projects at every scale, without hard requirments in terms of data format/extensions. This routines are built on the BIDS specifications for electrophysiology and for 2photon data. 
+The goal of this toolbox is to extract most of the relevant information from the FYD database (via the ____session.json___ files), thus requiring minimal input from NIN users. Thanks to these routines, that exploit FYD's metadata, you have all the flexibility on the user side, in terms of data managment - while the once painful process of reformatting the entire data in order to release it after publication, is accounted for by FYD2BIDS! The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging, and allows for projects at every scale, without hard requirments in terms of data format/extensions. These routines are built on the BIDS specifications for electrophysiology and for 2photon data. 
 
 The routine to convert a dataset into BIDS involves: 
 
