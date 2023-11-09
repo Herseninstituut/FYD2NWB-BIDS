@@ -5,10 +5,9 @@ The goal of this toolbox is to extract most of the relevant information from the
 
 The routine to convert a dataset into BIDS involves: 
 
-. creating folders that are BIDS compliant (automatically)
-. copying and changing the names of your data files (automatically)
-. generating metadata to accompany the data in the form of json sidecar files and tables in tab separated value format (.tsv) (both automatically and with minimal input from users)
-[See BIDS Specification](https://bids.neuroimaging.io/specification.html)   
+1. Creating folders that are BIDS compliant (automatically)
+2. copying and changing the names of your data files (automatically)
+3. generating metadata to accompany the data in the form of json sidecar files and tables in tab separated value format (.tsv) (both automatically and with minimal input from users) [See BIDS Specification](https://bids.neuroimaging.io/specification.html)   
 
 Below, you can find a short description of the requirments and the organization of FYD2BIDS.
 
