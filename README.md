@@ -10,7 +10,7 @@ For Electrophysiology BIDS specifies various tsv files:
 channels.tsv, contacts,tsv, probes.tsv, events.tsv, subjects.tsv  
 
 To help users understand what needs to be stored in these files, jsonc template files are included with explanatory comments to show the required and recommended fields that need to be provided to comply with the official BIDS metadata schema.  
-With __get_json_template__ the jsonc files can be converted to a matlab data structure and used to create structure arrays. Later these can be converted and exported to tsv spreadsheet files or json files. The jsonc files can easily be adapted by commenting out the fields you don't need or that are not be applicable to your data.
+With __get_json_template__ the jsonc files can be converted to a matlab data structure and used to create structure arrays. Later these can be converted and exported to tsv spreadsheet files or json files. The jsonc files can easily be adapted by commenting out the fields you don't need or that are not applicable to your data.
 
 The routines developed here for converting your data rely heavily on the use of the Datajoint toolbox, which you can install as an addon in matlab (See below for instructions). The nice thing about Datajoint is that it makes it super easy to interact with a MSQL database server. This applies to both retrieving data, as well as adding and updating data in various tables.
 [Datajoint Documentation](https://datajoint.github.io/datajoint-docs-original/matlab/)
@@ -33,5 +33,5 @@ Using Datajoint makes interacting with a MYSQL database a breeze. For example, w
 To get info on the fields in the table, simply type `describe(bids.Channels)`. For further usage, see the example scripts.
   
 3.  Adapt the Datajoint templates in the `DJ/+yourlab` folder to access tables in your labs FYD database.  
-Get a credentials mfile to access the database and adapt the initDJ funtion. 
+Get a credentials mfile to access the database and adapt the initDJ function. 
 You can get these from Chris van der Togt. 
