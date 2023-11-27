@@ -4,9 +4,10 @@ function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
         % create to add to sessions tsv output table
         Sess = struct('sessionid', sess_meta.sessionid, 'session_quality', [], 'number_of_trials', [], 'comment', []);
   
-        
+        %To create the bids compliant hierarchy of folders
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
-        session_folder = fullfile(subject_folder, ['sess-' sess_meta.sessionid] );
+        methods_folder = fullfile(subject_folder, 'multiphoton');
+        session_folder = fullfile(methods_folder, ['sess-' sess_meta.sessionid] );
         mkdir(session_folder);
 
         %Create BIDS compliant name

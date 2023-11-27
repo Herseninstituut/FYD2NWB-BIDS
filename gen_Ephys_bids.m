@@ -17,11 +17,13 @@
         % Template ephys events
         % events_templ = get_json_template('efys_events.jsonc');
     
-        % prepare the creation of subject and session folders with BIDS compliant names
+        % prepare the creation of subject, ephys and session folders with BIDS compliant names
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
-        session_folder = fullfile(subject_folder, ['sess-' sess_meta.sessionid] );
+        methods_folder = fullfile(subject_folder, 'ephys');
+        session_folder = fullfile(methods_folder, ['sess-' sess_meta.sessionid] );
+             
         mkdir(session_folder);
-
+         
         %Create BIDS compliant session name
         bids_prenom = fullfile(session_folder, ['sub-' sess_meta.subject '_sess-' sess_meta.sessionid '_task-' sess_meta.stimulus ]);
                 
