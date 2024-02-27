@@ -22,7 +22,14 @@
 
 %% Initialize Datajoint for your lab and retrieve metadata from the FYD database
 %Make sure to adapt this file to access the database of your lab
-initDJ
+
+% dezeeuwlab, heimellab, huitingalab, kalsbeeklab, kolelab, leveltlab, 
+% lohmannlab, roelfsemalab, saltalab, siclarilab, vansomerenlab, 
+% socialbrainlab, willuhnlab
+
+initDJ('roelfsemalab')
+% This checks the datajoint template and whether you are using the right
+% credentials
 
 % Choose where to store your dataset
 my_savepath = uigetdir();
@@ -112,7 +119,6 @@ setupid = setupid{1};
 recording_type = getSetupType(setupid);
 
 %% Ephys  Some metadata that will be constant over the whole dataset
-
 if contains(recording_type, 'ephys')
     
         
@@ -151,7 +157,11 @@ elseif strcmp(recording_type, 'multi_photon')
         for i = 1: length(flds)
             multiphoton_json.(flds{i}) = setup.(flds{i});
         end    
- 
+
+%% fMRI metadata valid over dataset
+elseif strcmp(recording_type, 'fMRI')
+    warndlg('Not yet implemented')
+    return;
 end
 %% Create table for the _sessions.tsv file
 

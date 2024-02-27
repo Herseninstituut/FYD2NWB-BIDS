@@ -1,9 +1,6 @@
 function initDJ(lab)
 % initDJ(lab)
 %input : name of your lab's database: 
-% dezeeuwlab, heimellab, huitingalab, kalsbeeklab, kolelab, leveltlab, 
-% lohmannlab, roelfsemalab, saltalab, siclarilab, vansomerenlab, 
-% socialbrainlab, willuhnlab
 
 p = mfilename('fullpath');
 filepath = fileparts(p);
@@ -33,10 +30,13 @@ end
 global dbpar
 
 %% get credentials file from data manager and rename or uncomment for your lab, 
-dbpar = nhi_fyd_parms();
-%dbpar = nhi_fyd_VCparms();
+%dbpar = nhi_fyd_parms();
+dbpar = nhi_fyd_VCparms();
 %dbpar = nhi_fyd_MVPparms();
-
+if ~strcmp(lab, dbpar.Database)
+    errordlg('You do not have the correct credentials')
+    return
+end
 
 setenv('DJ_HOST', dbpar.Server)
 setenv('DJ_USER', dbpar.User)
