@@ -40,13 +40,20 @@ my_savepath = uigetdir();
 
 % Example ephys dataset from Paolo Papale, please try this with your own
 % dataset
-project='Muckli_reboot';
-dataset='Passive_fixation';
-subject='Lick';
+myproject='Thatcher_mk';
+mydataset='Faces';
+mysubject='monkeyN';
 % gets urls to data folders, using DataJoint (See Examples_BIDS_Datajoint)
 % With this function you can also select based on excond(condition), stimulus,
 % setup, date
-sess_meta = getSessions(project=project, dataset=dataset, subject=subject);
+if isMATLABReleaseOlderThan("R2020a")
+    sess_meta = getSessions('project', myproject, 'dataset',mydataset, 'subject', mysubject);
+else
+    sess_meta = getSessions(project=myproject, dataset=mydataset, subject=mysubject);
+end
+
+
+% sess_meta = getSessions(project=project, dataset=dataset, subject=subject);
 % gets metadata about the dataset, from Dataset and Project tables
 dset_meta = getDataset( project, dataset );
 
@@ -142,7 +149,7 @@ if contains(recording_type, 'ephys')
         end
    
         ephys_json.type = types.ChannelType{1}; % Extracellular neuronal recording in this dataset.   
-        ephys_json.body_part = 'Striate Cortex (V1)'; % this should be retrieved from FYD!!!!
+        ephys_json.body_part = 'Ventral stream (V1,V4,IT)'; % this should be retrieved from FYD!!!!
  
 %% MULTIPHOTON metadata constant over dataset    
 elseif strcmp(recording_type, 'multi_photon')
@@ -179,22 +186,37 @@ SessArray = struct('sessionid', [], 'session_quality', [], 'number_of_trials', [
 % You will need to write your own subroutine to access specific
 % experimental data. The example subroutines give some idea.
 
-for i = 1:length(sess_meta)
-    if strcmp(recording_type, 'multi_photon')
-        % this conversion script is only for the 2photon data
-        % for the neurolabware system, scanbox-YETI
-        SessArray(i) = gen_2P_bids(sess_meta(i), multiphoton_json, dataset_folder);
-        
-    elseif contains(recording_type, 'ephys')
-        % Conversion script for Blackrock data
-        SessArray(i) = gen_Ephys_bids(sess_meta(i), ephys_json, dataset_folder);
-    end
+% Two examples one for 2p data and one for ephys data
+% to extract the correct data for each session;
+% SessArray(i) = gen_2P_bids(sess_meta(i), multiphoton_json, dataset_folder);
+% SessArray(i) = gen_Ephys_bids(sess_meta(i), ephys_json, dataset_folder);
+
+%Here is an example produced by Paolo
+mat_dimensions = {'trial_id' 'up_down' 'rot' 'metamer_intact' 'source'};
+
+for i = 1:length(sess_meta)   
+    % Conversion script for Blackrock data
+    SessArray(i) = gen_Ephys_bids_humanP(sess_meta(i), ephys_json, dataset_folder,0,mat_dimensions);
 end
 
 %% Write sessions table
-    SessTbl = struct2table(SessArray);
-    writetable(SessTbl, fullfile(dataset_folder, 'sessions.tsv'), ...
-       'FileType', 'text', ...
-       'Delimiter', '\t');
+SessTbl = struct2table(SessArray);
+writetable(SessTbl, fullfile(dataset_folder, 'sessions.tsv'), ...
+    'FileType', 'text', ...
+    'Delimiter', '\t');
+
+
+% Add pre-processed MUA as a derivative folder
+stimuli = unique({sess_meta.stimulus});
+C = strsplit(sess_meta(1).url,sess_meta(1).subject);
+for i = 1:length(stimuli)
+    mua_sess.url = [C{1},sess_meta(1).subject];
+    mua_sess.stimulus = stimuli{i};
+    mua_sess.subject = sess_meta(1).subject;
+    temp = gen_Ephys_bids_humanP(mua_sess, ephys_json, dataset_folder,1,[]);
+end
+
+   
+   
  
    
