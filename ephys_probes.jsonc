@@ -17,14 +17,14 @@
   "depth": 0, // Physical depth of the probe (int - um)
   "dimension_unit": "", // Units of the physical dimensions
   "contact_count": [], // Number of miscellaneous analog contacts for auxiliary signals 
- // "AlphaRotation": [], // Euler angle in degree to match probe extension dimensions (width, height, depth) to global x, y, z coordinates.
- // "BetaRotation": [], 
- // "GammaRotation": [],
- // "coordinate_reference_point": "", // Point of the probe that is described by the probe coordinates and on which the alpha, beta and gamma rotations are applied
+  "AlphaRotation": [], // Euler angle in degree to match probe extension dimensions (width, height, depth) to global x, y, z coordinates.
+  "BetaRotation": [], 
+  "GammaRotation": [],
+  "coordinate_reference_point": "", // Point of the probe that is described by the probe coordinates and on which the alpha, beta and gamma rotations are applied
   "hemisphere": "", // Which brain hemisphere was the probe  located
- // "AssociatedBrainRegion": "", // An identifier of the associated brain region based on the Uberon (https://obophenotype.github.io/uberon) ontology for  anatomical structures in animals. 
- // "AssociatedBrainRegionId": "", // The method used to identify the associated brain region
- // "AssociatedBrainRegionQualityType": "", // The method used to identify the associated brain region 
+  "AssociatedBrainRegion": "", // An identifier of the associated brain region based on the Uberon (https://obophenotype.github.io/uberon) ontology for  anatomical structures in animals. 
+  "AssociatedBrainRegionId": "", // The method used to identify the associated brain region
+  "AssociatedBrainRegionQualityType": "", // The method used to identify the associated brain region 
   "location": "", // brain area 
   "reference_atlas": "" // reference atlas used for associated brain region
 }
