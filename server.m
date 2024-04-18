@@ -22,7 +22,7 @@
 
 %% CLIENT
 
-% client = tcpclient("localhost",8080)
+% client = tcpclient("192.87.10.37",8080)
 % 
 % writeline(client, "Hello  world")
 % 
