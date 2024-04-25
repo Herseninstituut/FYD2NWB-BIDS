@@ -1,8 +1,9 @@
-%update_ninwb
+%update_ninwb_client
 
+lab = 'roelfsemalab';
 
-initDJ('roelfsemalab')
+initDJ(lab)
+sess_meta = getsessions(sessionid=sessionid);
 
 query = ninwb.Nwblist;
-
-query.insert( struct('sessionid', sess_meta(1).sessionid, 'url', sess_meta(1).url) )
+query.insert( struct('sessionid', sessionid, 'url', sess_meta.url, 'lab', lab ) )
