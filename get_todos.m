@@ -8,7 +8,6 @@ NwbLog = nwblog();
 
 query = ninwb.Nwblist;
 
-
 while(1)
     records = fetch(query & 'status="todo"', 'sessionid', 'lab', 'url');
     ln = length(records);
@@ -25,10 +24,17 @@ while(1)
         
 
         %% Get neccessary metadata, this contains references to other tables in FYD
-        sess_meta = getSessions(sessionid=sessionid);
+        sess_meta = getSessions(sessionid=sessionid); % metadata in JSON files and in Sessions table
+        project = sess_meta.project;
+        dataset = sess_meta.dataset;
         subject = sess_meta.subject;
         setup = sess_meta.setup;
+        stim = sess_meta.stimulus;
 
+        % Other tables in FYD
+        dataset_meta = getDataset( project, dataset );
+        stim_metadata = getStimulus(stim);
+        subject_meta = getSubjects(subject); % multiple subjects as cell array
 
         %% Meta data from the bids database
         setup_bids = getSetup(setup);
@@ -36,7 +42,7 @@ while(1)
 
         %% Retreive probe, contact and channel metadata from the database, selecting by subject
         key = ['subject="', subject,'"'];
-        probe_meta = fetch(bids.Probes & key, '*'); % '*' means retrieve all fields
+        probe_meta = fetch(bids.Probes & key, '*'); % '*' -> retrieve all fields
         contact_meta = fetch(bids.Contacts & key, '*');
         chan_meta  = fetch(bids.Channels & key, '*');
         

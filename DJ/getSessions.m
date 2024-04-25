@@ -5,6 +5,7 @@ function Sessions = getSessions(varargin)
 global dbpar
 
  p = inputParser;
+ addOptional(p,'sessionid','-',@(x)validateattributes(x,{'char'},{'nonempty'}))
  addOptional(p,'project','-',@(x)validateattributes(x,{'char'},{'nonempty'}))
  addOptional(p,'dataset','-',@(x)validateattributes(x,{'char'},{'nonempty'}))
  addOptional(p,'excond','-',@(x)validateattributes(x,{'char'},{'nonempty'}))
@@ -41,13 +42,17 @@ end
 Database = dbpar.Database;  %= yourlab
 query = eval([Database '.Sessions']);
 
-Sessions = fetch(query & strSel, 'dataset', 'subject', 'excond', 'stimulus', 'date', 'sessionid', 'url', 'setup', 'server');
+Sessions = fetch(query & strSel, 'project', 'dataset', 'subject', 'excond', 'stimulus', 'date', 'sessionid', 'url', 'setup', 'server');
 %converts from linux path to path of user system
 urls = arrayfun(@geturl, Sessions, 'UniformOutput', false);
 urls =  fileparts(urls);
 
-for i = 1:length(Sessions)
- Sessions(i).url = urls{i};
+if length(Sessions) > 1
+    for i = 1:length(Sessions)
+     Sessions(i).url = urls{i};
+    end
+else
+    Sessions.url = urls;
 end
 
 %Sessions = rmfield(Sessions, 'idx');

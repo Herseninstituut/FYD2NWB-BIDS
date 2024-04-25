@@ -7,12 +7,16 @@ if nargin == 0
      return
 else
     strSel = '';
-    for i = 1: length(subnames)
-        if i == 1
-            strSel = ['subjectid="' subnames{i} '"' ]; 
-        else
-            strSel = [strSel ' OR subjectid="' subnames{i} '"' ];
+    if iscell(subnames)  % is this a cell array of subject names or njust one name
+        for i = 1: length(subnames)
+            if i == 1
+                strSel = ['subjectid="' subnames{i} '"' ]; 
+            else
+                strSel = [strSel ' OR subjectid="' subnames{i} '"' ];
+            end
         end
+    else
+        strSel = ['subjectid="' subnames '"' ];
     end
 end
 
