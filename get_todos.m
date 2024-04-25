@@ -23,50 +23,59 @@ while(1)
         dbpar.Database = lab;
         
 
-        %% Get neccessary metadata, this contains references to other tables in FYD
-        sess_meta = getSessions(sessionid=sessionid); % metadata in JSON files and in Sessions table
-        project = sess_meta.project;
-        dataset = sess_meta.dataset;
-        subject = sess_meta.subject;
-        setup = sess_meta.setup;
-        stim = sess_meta.stimulus;
+        try
+            Okay = true;
+            %% Get neccessary metadata, this contains references to other tables in FYD
+            sess_meta = getSessions(sessionid=sessionid); % metadata in JSON files and in Sessions table
+            project = sess_meta.project;
+            dataset = sess_meta.dataset;
+            subject = sess_meta.subject;
+            setup = sess_meta.setup;
+            stim = sess_meta.stimulus;
+    
+            % Other tables in FYD
+            dataset_meta = getDataset( project, dataset );
+            stim_metadata = getStimulus(stim);
+            subject_meta = getSubjects(subject); % multiple subjects as cell array
+    
+            %% Meta data from the bids database
+            setup_bids = getSetup(setup);
+    
+    
+            %% Retreive probe, contact and channel metadata from the database, selecting by subject
+            key = ['subject="', subject,'"'];
+            probe_meta = fetch(bids.Probes & key, '*'); % '*' -> retrieve all fields
+            contact_meta = fetch(bids.Contacts & key, '*');
+            chan_meta  = fetch(bids.Channels & key, '*');
 
-        % Other tables in FYD
-        dataset_meta = getDataset( project, dataset );
-        stim_metadata = getStimulus(stim);
-        subject_meta = getSubjects(subject); % multiple subjects as cell array
-
-        %% Meta data from the bids database
-        setup_bids = getSetup(setup);
-
-
-        %% Retreive probe, contact and channel metadata from the database, selecting by subject
-        key = ['subject="', subject,'"'];
-        probe_meta = fetch(bids.Probes & key, '*'); % '*' -> retrieve all fields
-        contact_meta = fetch(bids.Contacts & key, '*');
-        chan_meta  = fetch(bids.Channels & key, '*');
+        catch err
+            messg = ['"</br><b>ERROR obtaining metadata</b>: ', err.identifier, '</br>"' ];
+            NwbLog.write(messg)
+            Okay = false;
+        end
         
-
-        %% RUN NWB COnversion
-        d = char(datetime);
-        % Put </br> in your messages to create new lines
-        messg = ['"</br><b>Converting session</b>: ', sessionid ' : started at ', d, '</br>"' ];
-        NwbLog.write(messg)
-        key = ['sessionid="', sessionid, '"'];
-        update(query & key, 'status', 'doing')
-
-%...................................................
-
-%....................................................
-
-
-        messg = ['"Conversion done: ', sessionid, '</br>"' ];
-        NwbLog.write(messg)
-
-    %% Finish by setting session to 'done' in ninwb database
-
-        update(query & key, 'status', 'done')
-        %finish by setting the record to 'done'
+        if Okay
+            %% RUN NWB COnversion
+            d = char(datetime);
+            % Put </br> in your messages to create new lines
+            messg = ['"</br><b>Converting session</b>: ', sessionid ' : started at ', d, '</br>"' ];
+            NwbLog.write(messg)
+            key = ['sessionid="', sessionid, '"'];
+            update(query & key, 'status', 'doing')
+    
+    %...................................................
+    
+    %....................................................
+    
+    
+            messg = ['"Conversion done: ', sessionid, '</br>"' ];
+            NwbLog.write(messg)
+    
+        %% Finish by setting session to 'done' in ninwb database
+    
+            update(query & key, 'status', 'done')
+            %finish by setting the record to 'done'
+        end
     else
        % disp('All done')
         pause(300) % 5min: 5 * 60 = 300s
