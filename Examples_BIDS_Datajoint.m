@@ -22,7 +22,8 @@ chanFields = fields(channelsJson);
 
 %EXAMPLE CELL ARRAY
 numberOfChannels = 1024;
-%This creates a cell array with metadata for multiple channels
+%This creates a cell array with metadata for multiple channels for subject
+%L01
 chanCell = cell(length(chanFields), numberOfChannels);
 for i = 1:numberOfChannels  
     chanCell(:,i) = {'L01', ['L01_' num2str(i)], 'EXT', 'mV', 30, 'KHz',...

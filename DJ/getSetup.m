@@ -23,3 +23,4 @@ end
 
 setup_bids.shortdescr = setup_meta.shortdescr;
 setup_bids.longdescr = setup_meta.longdescr;
+setup_bids.type = setup_meta.type;
