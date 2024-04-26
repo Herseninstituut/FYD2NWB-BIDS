@@ -39,11 +39,11 @@ channelMeta = cell2struct(chanCell, chanFields, 1);
 insert(bids.Channels, channelMeta)
 
 %% Retreive channel metadata from the database, selecting by subject
-channelMeta  = fetch(bids.Channels & 'subject="L01"', '*');
+channelMeta  = fetch(bids.Channels & 'subject="monkeyN"', '*'); % or enter all fields separately to retrieve
 
-%this will get all columns which you might not want, to restrict the output
-%to the fields you used to generate this metadata
-channelMeta = removefields(channelMeta, chanFields);
+%this will get all columns which you might not want, 
+% to restrict the output to the fields you used to generate this metadata
+channelMeta = removefields(channelMeta, chanFields); %string cell array of channels
 
 %% saving the channel metadata to a tsv file
 temp_folder = uigetdir();
@@ -76,7 +76,7 @@ writetable(channelTbl, fullfile(temp_folder, 'channels.tsv'), ...
        'Delimiter', '\t');
 
 
-   
+   'todo', 'doing', 'done'
    
 %% This is a structure template to create BIDS probe columns %%%%%%%%%%%%%%%
 
