@@ -1,7 +1,7 @@
 %%BIDS - Datajoint Examples ; update or retrieve from various Tables with Datajoint 
 %this scripts shows you how to use Datajoint to generate and retrieve metadata
 
-initDJ % credentials to access the database and initialization of Datajoint
+initDJ('roelfsemalab') % credentials to access the database and initialization of Datajoint
 
 
 %% Structure template to create BIDS channels columns %%%%%%%%%%%%%%%%%%%%%
@@ -63,6 +63,9 @@ contactFields = fields(contactsJson);
 %Make sure they have the correct column names or convert!!!!
 contactMeta = readtable("Contacts.xls");
 
+% import from  tsv table    
+contactMeta = readtable("contactx.tsv", "FileType","text", 'Delimiter', '\t');
+
 % Save the records to the bids database 
 insert(bids.Contacts, contactMeta)
 
@@ -71,6 +74,7 @@ contactTbl = struct2table(contactMeta);
 writetable(channelTbl, fullfile(temp_folder, 'channels.tsv'), ...
        'FileType', 'text', ...
        'Delimiter', '\t');
+
 
    
    

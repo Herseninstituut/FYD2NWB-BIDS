@@ -3,7 +3,7 @@
 {
   "subject": "", // Subject identifier
   "channel_id":"", // REQUIRED - Unique identifier of the channel, only containing letters and numbers. 
-//  "contact_id":"", //The label must correspond to an entry in the _contacts.tsv or be n/a
+  "contact_id":"", //The label must correspond to an entry in the _contacts.tsv or be n/a
   "type":"", //Type of the channel, e.g. extracellular signal, intracellular signal, synchronization signal. 
   "unit":"",  //Physical unit of the value represented in this channel, e.g. V for Volt,
   "sampling_frequency":"", // Sampling rate of the channel 
