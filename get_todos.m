@@ -9,7 +9,7 @@ NwbLog = nwblog();
 query = ninwb.Nwblist;
 
 while(1)
-    records = fetch(query & 'status="todo"', 'sessionid', 'lab', 'url');
+    records = fetch(query & 'status="todo"', '*');
     ln = length(records);
     
     if ln > 0 
@@ -39,7 +39,7 @@ while(1)
             subject_meta = getSubjects(subject); % multiple subjects as cell array
     
             %% Meta data from the bids database
-            setup_bids = getSetup(setup);
+            setup_meta = getSetup(setup);
     
     
             %% Retreive probe, contact and channel metadata from the database, selecting by subject
