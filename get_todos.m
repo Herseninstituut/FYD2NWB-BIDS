@@ -6,7 +6,7 @@ global dbpar
 conn = initmysql();
 NwbLog = nwblog();
 
-query = ninwb.Nwblist;
+query = bids.Nwblist;
 
 while(1)
     records = fetch(query & 'status="todo"', '*');
