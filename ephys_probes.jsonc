@@ -5,7 +5,6 @@
   "manufacturers_model_name": "",
   "manufacturer_model_version": "",
   "device_serial_number": "", // The serial number of the probe 
-
   "probe_id": "", // REQUIRED - A unique identifier of the probe
   "probe_type": "", // REQUIRED - The type of the probe
   "material": "", // A textual description of the base material of the probe.
