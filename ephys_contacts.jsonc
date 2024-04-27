@@ -2,14 +2,15 @@
 {
   "contact_id": "", // REQUIRED - ID of the contact (expected to match channel.tsv)
   "probe_id": "", // REQUIRED - Id of the probe the contact is on
+  "subject": "", // Subject identifier
   "x": [],  //  recorded position along the local width-axis relative to the probe origin and rotation (see probes.tsv)
   "y": [], //
   "z": [], //
   "physical_unit": "", // units used for x, y and z coordinates as well as contact size, internal_pipette_diameter and external_pipette_diameter
-  "impedance": "", // mpedance of the contact or pipette (pipette_resistance)
+  "impedance": [], // mpedance of the contact or pipette (pipette_resistance)
   "impedance_unit": "",  //  The unit of the impedance (kOhm).
   "shank_id": "",  //  Id to specify which shank of the probe
-  "contact_size": "",  // size of the contact, e.g. non-insulated surface are
+  "contact_size": [],  // size of the contact, e.g. non-insulated surface are
   "contact_shape": "",  // description of the shape of the conta
   "material": "",  // material of the contact surface for solid electrodes
   "location": "",   // An indication on the location of the contact (e.g. cortical layer 3)

@@ -1,9 +1,9 @@
 %{
   # contacts table for BIDS contacts tsv
-  contact_id    : varchar(60)  # REQUIRED - ID of the contact (expected to match channel.tsv)
-  subject       : varchar(50)  # REQUIRED - Subject identifier
   ---
+  contact_id    : varchar(60)  # REQUIRED - ID of the contact (expected to match channel.tsv)
   probe_id      : varchar(60)  # REQUIRED - Id of the probe the contact is on
+  subject       : varchar(50)  #  - Subject identifier
   x             : float  #  recorded position along the local width-axis relative to the probe origin and rotation (see probes.tsv)
   y             : float  #
   z             : float  #

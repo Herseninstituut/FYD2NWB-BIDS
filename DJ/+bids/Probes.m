@@ -3,15 +3,12 @@
     probe_id            : varchar(60) # REQUIRED - A unique identifier of the probe
     ---
     subject             : varchar(50) # subject identifier
-    manufacturer        : varchar(60)   # Manufacturer of the probes system 
-    manufacturers_model_name        : varchar(60)
+    manufacturer        : varchar(60)   # REQUIRED - Manufacturer of the probes system 
+    manufacturers_model_name        : varchar(60)  # REQUIRED - 
     manufacturer_model_version      : varchar(60)
     device_serial_number            : varchar(30)
-
-    
-    probe_type          : varchar(60) # REQUIRED - The type of the probe   : varchar(60)
+    probe_type          : varchar(60) # REQUIRED - The type of the probe
     material            : varchar(60) # A textual description of the base material of the probe.
-
     x                   : float # coordintaes of probe in subject
     y                   : float 
     z                   : float 
