@@ -1,4 +1,6 @@
 // Use this template to fit your needs, you can comment any fields that you do not use.
+// The fields correspond with the fields in the bids probes table. 
+// See Examples_BIDS_Datajoint.m
 {
   "probe_id": "", // REQUIRED - A unique identifier of the probe
   "subject": "", //Subject identifier

@@ -1,4 +1,6 @@
 // Use this template to fit your needs, you can comment any fields that you do not use.
+// The fields correspond with the fields in the bids contacts table. 
+// See Examples_BIDS_Datajoint.m
 {
   "contact_id": "", // REQUIRED - ID of the contact (expected to match channel.tsv)
   "probe_id": "", // REQUIRED - Id of the probe the contact is on
