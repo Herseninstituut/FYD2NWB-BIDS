@@ -4,46 +4,51 @@
 initDJ('roelfsemalab') % credentials to access the database and initialization of Datajoint
 
 
-%% Structure template to create BIDS channels columns %%%%%%%%%%%%%%%%%%%%%
+%% Structure template to create BIDS channels columns 
 
-% this template for electrophysiology defines BIDS spcific fields that 
+% The 'ephys_channels.jsonc' template for electrophysiology defines BIDS spcific fields that 
 % should be saved to a channels.tsv file
+% you can view the jsonc template in visual studio Code, and edit it
+% Comment out fields in the template to create a structure array with fields of your
+% choice, (the channel_id and contact_id field are required). 
+% Although subject is not required, it's a good idea to register the subject, since channels, contacts and possibly 
+% also probes will be specific for a subject. Then you can query the table using
+% subject as a key. 
+% fields in the template either have '' or [] as default entry, which 
+% means they either require a string or a value as an input.
+
 channelsJson = get_json_template('ephys_channels.jsonc');
 
-% Comment out fields in the template to create a structure array with fields of your
-% choice, (the channelid and the subject field are required). 
-% It's important to register the subject, since channels, contacts and possibly 
-% also probes will be specific for a subject. Then you can query the table using
-% subject as filter. 
 
+%EXAMPLE CREATING A CHANNEL ARRAY
 % Retrieve the field names (you need these to create a structure array,
-% if yor metadata is gnerated from cell array.
+% if yor metadata is generated from cell array.
 chanFields = fields(channelsJson);
 
-%EXAMPLE CELL ARRAY
-numberOfChannels = 1024;
+numberOfChannels = 64;
 %This creates a cell array with metadata for multiple channels for subject
 %L01
 chanCell = cell(length(chanFields), numberOfChannels);
 for i = 1:numberOfChannels  
-    chanCell(:,i) = {'L01', ['L01_' num2str(i)], 'EXT', 'mV', 30, 'KHz',...
-        'MUAe', 'Multiunit Activity', 'none', 'High Pass, rectification, Low Pass', ...
-        num2str(randi(10,1)), 'Qualty estimate between 1-10', 1.0, 0.0, ...
-        0, -1, 'Chamber screw'};
+    chanCell(:,i) = {'L01', 'BR_01', ['L01_' num2str(i)], num2str(i), 'EXT', 'mV', 30, 'KHz',...
+        'Multiunit Activity', 'MUAe', '', 'High Pass, rectification, Low Pass', ...
+        '', '', '', num2str(randi(10,1)), 0, 1.0, ...
+         -1, 'Chamber screw', ''};
 end
 
 %CONVERT to Structure Array 
 channelMeta = cell2struct(chanCell, chanFields, 1);
 
-%% Save the records to the bids database 
+%% Save the records directy to the bids database (please contact us if this doesn't work)
 insert(bids.Channels, channelMeta)
 
 %% Retreive channel metadata from the database, selecting by subject
-channelMeta  = fetch(bids.Channels & 'subject="monkeyN"', '*'); % or enter all fields separately to retrieve
+channelMeta  = fetch(bids.Channels & 'subject="L01"', '*'); % or enter all fields separately to retrieve
 
-%this will get all columns which you might not want, 
+%this will get all possible columns which you might not want, 
 % to restrict the output to the fields you used to generate this metadata
 channelMeta = removefields(channelMeta, chanFields); %string cell array of channels
+channelMeta = keepfields(channelMeta, chanFields);
 
 %% saving the channel metadata to a tsv file
 temp_folder = uigetdir();
@@ -75,10 +80,9 @@ writetable(channelTbl, fullfile(temp_folder, 'channels.tsv'), ...
        'FileType', 'text', ...
        'Delimiter', '\t');
 
-
-   'todo', 'doing', 'done'
    
 %% This is a structure template to create BIDS probe columns %%%%%%%%%%%%%%%
+% ... note that the probe_id should be unique! ......
 
 probeJson = get_json_template('ephys_probes.jsonc');
 
@@ -90,7 +94,7 @@ numberOfProbes = 2;
 %This creates a cell array with some random metadata for multiple probes
 probCell = cell(length(probeFields), numberOfProbes);
 for i = 1:numberOfProbes  
-    probCell(:,i) = {'L01', 'Neuronexis', '', '', '', ['L01_' num2str(i)], ...
+    probCell(:,i) = {['Nx_A',num2str(i)], 'L01', 'Neuronexis', '', '', ['L01_' num2str(i)], ...
         'neuronexis-probe', 'silicon', randn(1), randn(1), randn(1), ...
         100, 2000, 2000, 'um', 60, 'left', 'V1', 'Paxinos'};
 end
