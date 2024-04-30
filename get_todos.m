@@ -49,7 +49,7 @@ while(1)
             chan_meta  = fetch(bids.Channels & key, '*');
 
         catch err
-            messg = ['"</br><b>ERROR obtaining metadata</b>: ', err.identifier, '</br>"' ];
+            messg = ['<br><b>ERROR obtaining metadata</b>: ', err.identifier, '<br>' ];
             NwbLog.write(messg)
             Okay = false;
         end
@@ -58,7 +58,7 @@ while(1)
             %% RUN NWB COnversion
             d = char(datetime);
             % Put </br> in your messages to create new lines
-            messg = ['"</br><b>Converting session</b>: ', sessionid ' : started at ', d, '</br>"' ];
+            messg = ['<br><b>Converting session</b>: ', sessionid ' : started at ', d, '<br>' ];
             NwbLog.write(messg)
             key = ['sessionid="', sessionid, '"'];
             update(query & key, 'status', 'doing')
@@ -68,7 +68,7 @@ while(1)
     %....................................................
     
     
-            messg = ['"Conversion done: ', sessionid, '</br>"' ];
+            messg = ['Conversion done: ', sessionid, '<br>' ];
             NwbLog.write(messg)
     
         %% Finish by setting session to 'done' in ninwb database
