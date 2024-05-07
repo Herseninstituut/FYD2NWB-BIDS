@@ -53,20 +53,20 @@ else
 end
 
 
-% sess_meta = getSessions(project=project, dataset=dataset, subject=subject);
+% sess_meta = getSessions(project=myproject, dataset=dataset, subject=subject);
 % gets metadata about the dataset, from Dataset and Project tables
-dset_meta = getDataset( project, dataset );
+dset_meta = getDataset( myproject, mydataset );
 
 % Example multi_photon dataset 
-% project='GluA3_VR';
+% myproject='GluA3_VR';
 % dataset='KOinV1PV_2P';
-% sess_meta = getSessions(project=project, dataset=dataset);
-% dset_meta = getDataset( project, dataset );
+% sess_meta = getSessions(project=myproject, dataset=mydataset);
+% dset_meta = getDataset( myproject, mydataset );
 
 %% Create the dataset folder
 
 %Create dataset folder, in selected path, with name of dataset
-dataset_folder = fullfile(my_savepath, dataset);
+dataset_folder = fullfile(my_savepath, mydataset);
 mkdir(dataset_folder);
 
 
@@ -95,13 +95,13 @@ fclose(fid);
 dd = get_json_template('template_dataset_description.jsonc');
 
 % Fill some values using metadata from the FYD database: dset_meta
-dd.name = dataset;
+dd.name = mydataset;
 dd.license = 'CC BY-NC-SA 4.0';
 dd.authors = dset_meta.author;
 dd.institution_department_name =  'Vision and Cognition'; % 'Molecular Visual Plasticity'; %
 dd.institution_name = 'Netherlands Institute for Neuroscience';
 dd.institution_address = 'Meibergdreef 47, 1105BA Amsterdam, The Netherlands';
-dd.dataset_short_description = [ dataset ': '  dset_meta.shortdescr ', in project ' project ];
+dd.dataset_short_description = [ mydataset ': '  dset_meta.shortdescr ', in project ' myproject ];
 dd.dataset_description = dset_meta.longdescr;
 dd.dataset_type="raw";
 dd.generated_by.name = 'FYD2BIDS';
