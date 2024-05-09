@@ -1,0 +1,30 @@
+# Use this template to fit your needs you can comment any fields that you do not use.
+
+  institution_name: ''
+  institution_adress: ''
+  institution_department_name: ''
+  manufacturer: ''
+  manufacturers_model_name: ''
+  device_serial_number: ''
+  firmware: ''
+  recording_setup: ''    # Name of multiphoton setup
+  software_name: ''      # Software name of system 
+  software_versions: ''  # Version
+  scanning_frequency: 0  # resonant scanning frequency
+  laser_model_name: ''
+  laser_excitation_wave_length: 0
+  laser_pulse_frequency: 0
+  pixel_size: 0         
+  pixel_size_units: ''   
+  pixel_dimensions: 0  #image dimensions in pixels
+  objective: ''
+  numerical_aperture: 0
+  magnification: 0
+  image_acquisition_protocol: ''
+  task_name: ''
+  task_description: ''
+  channels: 0               # number of channels
+  emission_wave_lengths: 0  # fluorescence channel output
+  sampling_frequency: 0     #frame rate
+  recording_duration: 0 
+  number_of_frames: 0
