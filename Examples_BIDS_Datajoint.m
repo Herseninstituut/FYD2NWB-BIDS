@@ -2,7 +2,7 @@
 % this script shows you how to use Datajoint to generate and retrieve metadata
 % Since Neurodata Without Borders uses yaml files for their templates I
 % have now also adoptied this because they can also be viewed in matlab as
-% of 2024.
+% of 2024 with syntax highlighting
 
 initDJ('yourlab') % credentials to access the database and initialization of Datajoint
 
@@ -125,7 +125,10 @@ describe(bids.Contacts) % Show table structure
 bids.Probes %Show table contents
 describe(bids.Probes) % Show table structure
 
+%% update records (datajoint doesn't allow updates to maintain consistency over a database)
+% we need to retrieve the records we want to change, delete them in the
+% database, update a value in each record and then insert them again.
 
 
 %% CAREFULL: Only delete entries in table bids.Probes where the subject is L01
-del(bids.Probes & 'subject="L01"') 
+del(bids.Probes & 'subject="monkeyX"') 
