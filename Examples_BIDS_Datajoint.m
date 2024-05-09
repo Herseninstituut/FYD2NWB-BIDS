@@ -18,6 +18,7 @@ initDJ('roelfsemalab') % credentials to access the database and initialization o
 % means they either require a string or a value as an input.
 
 channelsJson = get_json_template('ephys_channels.jsonc');
+chan_meta = yaml.loadFile('ephys_channels.yaml');
 
 
 %EXAMPLE CREATING A CHANNEL ARRAY
