@@ -6,7 +6,7 @@ function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
   
         %To create the bids compliant hierarchy of folders
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
-        methods_folder = fullfile(subject_folder, 'multiphoton');
+        methods_folder = fullfile(subject_folder, 'ophys');
         session_folder = fullfile(methods_folder, ['sess-' sess_meta.sessionid] );
         mkdir(session_folder);
 
@@ -38,7 +38,7 @@ function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
                 multiphoton.image_acquisition_protocol = 'unidirectional';
             else 
                 multiphoton.image_acquisition_protocol = 'bidirectional';
-                scanmode = 2;
+                scanmode = 2; %Scanmode in info is 0, but I need it to be 2
             end
             multiphoton.sampling_frequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
             multiphoton.pixel_dimensions = [info.Shape(1) info.Shape(2)];
