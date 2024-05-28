@@ -1,4 +1,4 @@
-function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
+function Sess = gen_2P_bids(sess_meta, ophys, dataset_folder)
         global info %% header info from imaging files
        
         % create to add to sessions tsv output table
@@ -31,20 +31,19 @@ function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
         %read matadata from scanbox imaging file (.sbx)
         fpath = [sess_meta.url '\' sess_meta.sessionid];
         try
-            info = [];
-            sbxread(fpath, 0, 1);
+            sbxread(fpath, 0, 0);
             scanmode = info.scanmode;
             if scanmode == 1
-                multiphoton.image_acquisition_protocol = 'unidirectional';
+                ophys.image_acquisition_protocol = 'unidirectional';
             else 
-                multiphoton.image_acquisition_protocol = 'bidirectional';
+                ophys.image_acquisition_protocol = 'bidirectional';
                 scanmode = 2; %Scanmode in info is 0, but I need it to be 2
             end
-            multiphoton.sampling_frequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
-            multiphoton.pixel_dimensions = [info.Shape(1) info.Shape(2)];
-            multiphoton.channels = info.Shape(3);
-            multiphoton.recording_duration = ceil(info.max_idx / multiphoton.sampling_frequency);
-            multiphoton.number_of_frames = info.max_idx;
+            ophys.sampling_frequency = info.resfreq * scanmode /(info.Shape(2) * info.Shape(3));
+            ophys.pixel_dimensions = [info.Shape(1) info.Shape(2)];
+            ophys.channels = info.Shape(3);
+            ophys.recording_duration = ceil(info.max_idx / ophys.sampling_frequency);
+            ophys.number_of_frames = info.max_idx;
             
             % Also retrieve the events and create an events.tsv file
             Events = array2table([info.frame info.line info.event_id], 'VariableNames', { 'frame', 'line', 'event_id' });
@@ -52,7 +51,7 @@ function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
                'FileType', 'text', ...
                'Delimiter', '\t');
            
-           multiphoton.number_of_trials = height(Events); %This may need to be validated
+           ophys.number_of_trials = height(Events); %This may need to be validated
            Sess.number_of_trials = height(Events);
            Sess.comment = 'Okay';
            
@@ -63,12 +62,12 @@ function Sess = gen_2P_bids(sess_meta, multiphoton, dataset_folder)
 
         %Read metadata related to the task from the FYD database
         Task_meta = getStimulus(sess_meta.stimulus);
-        multiphoton.task_name = Task_meta.stimulusid;
-        multiphoton.task_description = Task_meta.shortdescr;
+        ophys.task_name = Task_meta.stimulusid;
+        ophys.task_description = Task_meta.shortdescr;
 
         %Write to json file
-        f = fopen([bids_prenom '_multiphoton.json'], 'w' ); 
-        txtO = jsonencode(multiphoton);
+        f = fopen([bids_prenom '_ophys.json'], 'w' ); 
+        txtO = jsonencode(ophys);
         fwrite(f, txtO);
         fclose(f);
         

@@ -1,6 +1,6 @@
 # Use this template to fit your needs you can comment any fields that you do not use.
-  institution_name: 'Netherlands Institute for Neuroscience'
-  institution_adress: 'Meibergdreef 47 1047BA Amsterdam the Netherlands'
+  institution_name: ''
+  institution_adress: ''
   institution_department_name: ''
   manufacturer: ''                      # Manufacturer of the ephys system 
   manufacturers_model_name: ''          # Name of the DAQ System used
@@ -9,7 +9,7 @@
   device_serial_number: ''              # The serial number of the components of the setup
   recording_setup: ''                   # Custom name of the DAQ system
   software_name: ''                     # Software suite used for data acquisition
-  software_versions: ''                 # Manufacturers designation of the acquisition software.	
+  software_versions: ''                 # Manufacturers designation of the acquisition software	
   creator: ''                           #  Name of the person who set up the system
   maintainer: ''                        # Name of the person who maintains the system
   software_filters: ''                  #REQUIRED - Object of temporal software filters applied or n/a if the data is not available. 

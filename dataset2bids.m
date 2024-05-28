@@ -92,15 +92,15 @@ fclose(fid);
 %% Create dataset_description.json file
 
 % Get the template, comment the fields you don't use
-dd = get_json_template('template_dataset_description.jsonc');
+dd = yaml.loadFile('template_dataset_description.yaml');
 
 % Fill some values using metadata from the FYD database: dset_meta
 dd.name = mydataset;
 dd.license = 'CC BY-NC-SA 4.0';
 dd.authors = dset_meta.author;
-dd.institution_department_name =  'Vision and Cognition'; % 'Molecular Visual Plasticity'; %
-dd.institution_name = 'Netherlands Institute for Neuroscience';
-dd.institution_address = 'Meibergdreef 47, 1105BA Amsterdam, The Netherlands';
+dd.institution_name = dset_meta.institution_name;
+dd.institution_address = dset_meta.institution_address;
+dd.institution_department_name =  dataset_meta.institution_department_name; % 'Molecular Visual Plasticity'; %
 dd.dataset_short_description = [ mydataset ': '  dset_meta.shortdescr ', in project ' myproject ];
 dd.dataset_description = dset_meta.longdescr;
 dd.dataset_type="raw";
@@ -130,12 +130,12 @@ if contains(recording_type, 'ephys')
     
         
         % ephys signal types
-        types = get_json_template('ephys_types.jsonc');
+        types = yaml.loadFile('ephys_types.yaml');
                   
         % Template ephys metadata
         % Here also, you may need to comment out fields that are not
         % appropriate or unknown for your dataset
-        ephys_json = get_json_template('template_ephys.jsonc');
+        ephys_json = yaml.loadFile('template_ephys.yaml');
         
         % Much of the metadata about the devices in a setup goes into the ephys.json file.
         % Retrieve this info from the bids.Ephys and .Setups table
@@ -149,20 +149,21 @@ if contains(recording_type, 'ephys')
         end
    
         ephys_json.type = types.ChannelType{1}; % Extracellular neuronal recording in this dataset.   
-        ephys_json.body_part = 'Ventral stream (V1,V4,IT)'; % this should be retrieved from FYD!!!!
+        % ephys_json.body_part = 'Ventral stream (V1,V4,IT)'; % this should be retrieved from FYD!!!!
  
 %% MULTIPHOTON metadata constant over dataset    
-elseif strcmp(recording_type, 'multi_photon')
+elseif strcmp(recording_type, 'ophys')
     
         %Predefined parameter fields for 2 photon imaging
-        multiphoton_json = get_json_template('template_2p_imaging.jsonc');
+        ophys_json = yaml.loadFile('template_ophys.yaml');
+
         %retrieve info on setup and device
         setup = getSetup( setupid );
        
         %copy values to corresponding fields
         flds = fields(setup);
         for i = 1: length(flds)
-            multiphoton_json.(flds{i}) = setup.(flds{i});
+            ophys_json.(flds{i}) = setup.(flds{i});
         end    
 
 %% fMRI metadata valid over dataset

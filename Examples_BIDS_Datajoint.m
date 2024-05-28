@@ -63,25 +63,25 @@ writetable(ChannelTbl, fullfile(temp_folder, 'channels.tsv'), ...
  
    
   
-%% Structure template to create BIDS contacts columns %%%%%%%%%%%%%%%%%%%%%
+%% Structure template to create BIDS electrodes columns %%%%%%%%%%%%%%%%%%%%%
 
 % contactsJson = get_json_template('ephys_contacts.jsonc');
-contacts_templ = yaml.loadFile('ephys_contacts.yaml');
-contactFields = fields(contacts_templ);
+electrodes_templ = yaml.loadFile('ephys_electrodes.yaml');
+contactFields = fields(electrodes_templ);
 
 %Generate contact Metadata structure array from an Excel spreadsheet.
 %Make sure they have the correct column names or convert!!!!
-contact_meta = readtable("Contacts.xls");
+electrode_meta = readtable("electrodes.xls");
 
 % import from  tsv table    
-contact_meta = readtable("contactx.tsv", "FileType","text", 'Delimiter', '\t');
+electrode_meta = readtable("electrodes.tsv", "FileType","text", 'Delimiter', '\t');
 
-% Save the records to the BIDS database  ->Contacts table
-insert(bids.Contacts, contact_meta)
+% Save the records to the BIDS database  ->Electrode table
+insert(bids.Electrodes, electrode_meta)
 
 % save the channel metadata to a tsv file
-contactTbl = struct2table(contact_meta);
-writetable(channelTbl, fullfile(temp_folder, 'channels.tsv'), ...
+electrodeTbl = struct2table(electrode_meta);
+writetable(electrodeTbl, fullfile(temp_folder, 'electrodes.tsv'), ...
        'FileType', 'text', ...
        'Delimiter', '\t');
 
