@@ -9,13 +9,14 @@ The routine to convert a dataset into BIDS involves:
 2. copying and changing the names of your data files (automatically)
 3. generating metadata to accompany the data in the form of json sidecar files and tables in tab separated value format (.tsv) (both automatically and with minimal input from users) [See BIDS Specification](https://bids.neuroimaging.io/specification.html)   
 
+
 Below, you can find a short description of the requirments and the organization of FYD2BIDS.
 
 The only input required by NIN users concerns some of the BIDS metadata related to the recording equipment. For Electrophysiology, BIDS specifies various tsv files: 
-channels.tsv, contacts,tsv, probes.tsv, events.tsv, subjects.tsv  
+channels.tsv, electrodes,tsv, probes.tsv, events.tsv, subjects.tsv  
 
-To help users understand what needs to be stored in these files, we provide "jsonc" template files, with explanatory comments to show the required and recommended fields that need to be provided to succesfully meet the requirments of the official BIDS metadata schema.  
-With __get_json_template__ the jsonc files can be converted to a matlab data structure and used to create structure arrays. Later these can be converted and exported to tsv spreadsheet files or json files. The jsonc files can easily be adapted by commenting out the fields you don't need or that are not applicable to your data (Edit with Visual Studio Code). What's more, you can save this metadata directly to the __bids__ database.
+To help users understand what needs to be stored in these files, we provide "yaml" template files, with explanatory comments to show the required and recommended fields that need to be provided to succesfully meet the requirments of the official BIDS metadata schema.  
+With __get_json_template__ the jsonc files can be converted to a matlab data structure and used to create structure arrays. Later these can be converted and exported to tsv spreadsheet files or json files. The jsonc files can easily be adapted by commenting out the fields you don't need or that are not applicable to your data.
 
 The routines developed here for converting your data rely heavily on the use of the Datajoint toolbox, which you can install as an addon in matlab (See below for instructions). The nice thing about Datajoint is that it makes it super easy to interact with a MSQL database server. This applies to both retrieving data, as well as adding and updating data in various tables.
 [Datajoint Documentation](https://datajoint.github.io/datajoint-docs-original/matlab/)
