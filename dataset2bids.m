@@ -1,6 +1,6 @@
 %% dataset2bids
-% This is an example script that illustrates how you can retrieve metadata
-% and generate a BIDS compliant dataset in the folder of your choice.
+% This is an example script that illustrates how you can 
+% generate a BIDS compliant dataset.
 % 1. It first selects and retrieves all the urls to the sessions you want to
 % incorporate in your dataset.
 
@@ -10,14 +10,12 @@
 
 % Basic metadata can be retrieved from the FYD database. This depends on
 % how well you have added documentation through the WebApp.
-% Nevertheless, you will still need to retrieve extra metadata from the 
-% log files you create with your data with custom scripts.
 
 % Two subroutines were added in this repo as examples of custom subroutines 
 % to retrieve metadata, one for ephys (gen_ephys_bids.m) and one for 2photon
 % data (gen_2P_bids.m)
 % This script will choose one or the other depending on the setup
-% identifier ('Gaia' => 2P, 'MonkeyLab' => ephys)
+% identifier ('Gaia' => ophys, 'MonkeyLab' => ephys)
 
 
 %% Initialize Datajoint for your lab and retrieve metadata from the FYD database
@@ -27,7 +25,7 @@
 % lohmannlab, roelfsemalab, saltalab, siclarilab, vansomerenlab, 
 % socialbrainlab, willuhnlab
 
-initDJ('roelfsemalab')
+initDJ('leveltlab')
 % This checks the datajoint template and whether you are using the right
 % credentials
 
@@ -38,11 +36,18 @@ my_savepath = uigetdir();
 % getting metadata for all sessions from FYD, this returns a table with fields 
 % url, subject, condition, stimulus, date, setup for each recording session
 
+% Example multi_photon dataset 
+myproject='GluA3_VR';
+mydataset='KOinV1PV_2P';
+mysubject='Pinot';
+
 % Example ephys dataset from Paolo Papale, please try this with your own
 % dataset
 myproject='Thatcher_mk';
 mydataset='Faces';
 mysubject='monkeyN';
+
+
 % gets urls to data folders, using DataJoint (See Examples_BIDS_Datajoint)
 % With this function you can also select based on excond(condition), stimulus,
 % setup, date
@@ -52,16 +57,8 @@ else
     sess_meta = getSessions(project=myproject, dataset=mydataset, subject=mysubject);
 end
 
-
-% sess_meta = getSessions(project=myproject, dataset=dataset, subject=subject);
 % gets metadata about the dataset, from Dataset and Project tables
 dset_meta = getDataset( myproject, mydataset );
-
-% Example multi_photon dataset 
-% myproject='GluA3_VR';
-% dataset='KOinV1PV_2P';
-% sess_meta = getSessions(project=myproject, dataset=mydataset);
-% dset_meta = getDataset( myproject, mydataset );
 
 %% Create the dataset folder
 
@@ -98,14 +95,13 @@ dd = yaml.loadFile('template_dataset_description.yaml');
 dd.name = mydataset;
 dd.license = 'CC BY-NC-SA 4.0';
 dd.authors = dset_meta.author;
-dd.institution_name = dset_meta.institution_name;
-dd.institution_address = dset_meta.institution_address;
-dd.institution_department_name =  dataset_meta.institution_department_name; % 'Molecular Visual Plasticity'; %
+dd.institution_department_name =  dset_meta.institution_department_name; % 'Molecular Visual Plasticity'; %
 dd.dataset_short_description = [ mydataset ': '  dset_meta.shortdescr ', in project ' myproject ];
 dd.dataset_description = dset_meta.longdescr;
-dd.dataset_type="raw";
+dd.dataset_type='raw';
 dd.generated_by.name = 'FYD2BIDS';
-dd.generated_by.version = '1.0';
+dd.generated_by.version = 1.0;
+dd.generated_by.container.name = 'NWB';
 
 % Save the dataset descriptor to a json file          
 txtO = jsonencode(dd);
@@ -124,6 +120,11 @@ end
 %We retrieve the setup type from the lab.Setups table
 setupid = setupid{1};
 recording_type = getSetupType(setupid);
+        
+%retrieve info on setup, device and task
+setup_meta = getSetup( setupid );
+
+
 
 %% Ephys  Some metadata that will be constant over the whole dataset
 if contains(recording_type, 'ephys')
@@ -135,36 +136,51 @@ if contains(recording_type, 'ephys')
         % Template ephys metadata
         % Here also, you may need to comment out fields that are not
         % appropriate or unknown for your dataset
-        ephys_json = yaml.loadFile('template_ephys.yaml');
+        ephys = yaml.loadFile('template_ephys.yaml');
         
         % Much of the metadata about the devices in a setup goes into the ephys.json file.
         % Retrieve this info from the bids.Ephys and .Setups table
         % The bids.Ephys table is BIDS compliant, and the field values can
-        % be directly copied to our ephys_json output structure. 
-        setup = getSetup( setupid );
+        % be directly copied to our ephys output structure. 
+        
         %copy values to corresponding fields
-        flds = fields(setup);
+        flds = fields(ephys);
         for i = 1: length(flds)
-            ephys_json.(flds{i}) = setup.(flds{i});
+            if isstring(ephys.(flds{i}) ) % character arrays
+                ephys.(flds{i}) = char(ephys.(flds{i})); 
+                if isfield(setup_meta, flds{i}), ephys.(flds{i}) = char(setup_meta.(flds{i})); end
+                if isfield(dset_meta, flds{i}), ephys.(flds{i}) = char(dset_meta.(flds{i})); end
+            else  % numbers
+              if isfield(setup_meta, flds{i}), ephys.(flds{i}) = setup_meta.(flds{i}); end
+              if isfield(dset_meta, flds{i}), ephys.(flds{i}) = dset_meta.(flds{i}); end              
+            end
         end
    
-        ephys_json.type = types.ChannelType{1}; % Extracellular neuronal recording in this dataset.   
-        % ephys_json.body_part = 'Ventral stream (V1,V4,IT)'; % this should be retrieved from FYD!!!!
+       % ephys_json.body_part = 'Ventral stream (V1,V4,IT)'; % this should be retrieved from FYD!!!!
  
 %% MULTIPHOTON metadata constant over dataset    
 elseif strcmp(recording_type, 'ophys')
     
         %Predefined parameter fields for 2 photon imaging
-        ophys_json = yaml.loadFile('template_ophys.yaml');
+        ophys = yaml.loadFile('template_ophys.yaml');
 
-        %retrieve info on setup and device
-        setup = getSetup( setupid );
+        %retrieve info on setup, device and task
+        setup_meta = getSetup( setupid );
        
         %copy values to corresponding fields
-        flds = fields(setup);
-        for i = 1: length(flds)
-            ophys_json.(flds{i}) = setup.(flds{i});
-        end    
+        flds = fields(ophys);
+        for i = 1:length(flds)
+            if isstring(ophys.(flds{i}) )
+                ophys.(flds{i}) = char(ophys.(flds{i})); 
+                if isfield(setup_meta, flds{i}), ophys.(flds{i}) = char(setup_meta.(flds{i})); end
+                if isfield(dset_meta, flds{i}), ophys.(flds{i}) = char(dset_meta.(flds{i})); end
+            else
+                if isfield(setup_meta, flds{i}), ophys.(flds{i}) = setup_meta.(flds{i}); end
+                if isfield(dset_meta, flds{i}), ophys.(flds{i}) = dset_meta.(flds{i}); end                
+            end
+
+         %   if isfield(task_meta, flds{i}), ophys.(flds{i}) = char(task_meta.(flds{i})); end
+        end
 
 %% fMRI metadata valid over dataset
 elseif strcmp(recording_type, 'fMRI')
@@ -192,12 +208,17 @@ SessArray = struct('sessionid', [], 'session_quality', [], 'number_of_trials', [
 % SessArray(i) = gen_2P_bids(sess_meta(i), multiphoton_json, dataset_folder);
 % SessArray(i) = gen_Ephys_bids(sess_meta(i), ephys_json, dataset_folder);
 
-%Here is an example produced by Paolo
-mat_dimensions = {'trial_id' 'up_down' 'rot' 'metamer_intact' 'source'};
+if strcmp(stupid, 'Gaia')
+    SessArray(i) = gen_2P_bids(sess_meta(i), ophys_json, dataset_folder);
+    
+elseif strcmp(setupid, 'monkey_setup_4')
+    %Here is an example produced by Paolo
+    mat_dimensions = {'trial_id' 'up_down' 'rot' 'metamer_intact' 'source'};
+    for i = 1:length(sess_meta)   
+        % Conversion script for Blackrock data
+        SessArray(i) = gen_Ephys_bids_humanP(sess_meta(i), ephys, dataset_folder,0,mat_dimensions);
 
-for i = 1:length(sess_meta)   
-    % Conversion script for Blackrock data
-    SessArray(i) = gen_Ephys_bids_humanP(sess_meta(i), ephys_json, dataset_folder,0,mat_dimensions);
+    end
 end
 
 %% Write sessions table
@@ -214,7 +235,7 @@ for i = 1:length(stimuli)
     mua_sess.url = [C{1},sess_meta(1).subject];
     mua_sess.stimulus = stimuli{i};
     mua_sess.subject = sess_meta(1).subject;
-    temp = gen_Ephys_bids_humanP(mua_sess, ephys_json, dataset_folder,1,[]);
+    temp = gen_Ephys_bids_humanP(mua_sess, ephys, dataset_folder,1,[]);
 end
 
    
