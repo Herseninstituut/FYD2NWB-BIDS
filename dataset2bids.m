@@ -29,8 +29,6 @@ initDJ('leveltlab')
 % This checks the datajoint template and whether you are using the right
 % credentials
 
-% Choose where to store your dataset
-my_savepath = uigetdir();
 
 %% SELECT YOUR DATASET!!!
 % getting metadata for all sessions from FYD, this returns a table with fields 
@@ -61,6 +59,8 @@ end
 dset_meta = getDataset( myproject, mydataset );
 
 %% Create the dataset folder
+% Choose where to store your dataset
+my_savepath = uigetdir();
 
 %Create dataset folder, in selected path, with name of dataset
 dataset_folder = fullfile(my_savepath, mydataset);

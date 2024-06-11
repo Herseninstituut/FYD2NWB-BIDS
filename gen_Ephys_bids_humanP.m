@@ -178,8 +178,8 @@
         % Read metadata related to the task/stimulus for this session
         % from the FYD database
         task_meta = getStimulus(sess_meta.stimulus);
-        ephys_json.task_name = task_meta.stimulusid;
-        ephys_json.task_description = task_meta.shortdescr;
+        ephys_json.task_name = task_meta.task_name;
+        ephys_json.task_description = task_meta.task_description;
 
         %Write to json file
         f = fopen([bids_prenom '_ephys.json'], 'w' ); 
