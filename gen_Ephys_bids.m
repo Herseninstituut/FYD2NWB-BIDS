@@ -1,4 +1,4 @@
- function Sess = gen_Ephys_bids(sess_meta, ephys_json, dataset_folder)
+ function Sess = gen_ephys_bids(md, dataset_folder)
          
  % INPUT: sess_meta retrieved info from FYD database for this session;
  %        ephys_json BIDS metadata prefilled for this session  
@@ -7,7 +7,10 @@
  % OUTPUT: This script creates folders with BIDS compliant names, renames
  % the data files to BIDS compliant names, ands adds metadata files
  % required by BIDS
- 
+        
+        sess_meta = md.sess_meta;
+        ephys = md.ephys;
+        
         % Output for the sessions table in tsv format
         Sess = struct('sessionid', sess_meta.sessionid, 'session_quality', [], 'number_of_trials', [], 'comment', []);
          
