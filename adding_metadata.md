@@ -12,8 +12,8 @@ Much of the metadata that is needed for generating NWB files and formatting data
 #### FYDapp edit
 Two examples from the FYD edit interface: Subject and Setup are essential metadata entries.
 
-<img src="https://github.com/Herseninstituut/NINwb/blob/main/images/subject.png" >
-<img src="https://github.com/Herseninstituut/NINwb/blob/main/images/setup.png" >
+<img src="https://github.com/Herseninstituut/FYD2NWB-BIDS/blob/main/images/subject.png" >
+<img src="https://github.com/Herseninstituut/FYD2NWB-BIDS/blob/main/images/setup.png" >
 
 The lower image shows the interface in the FYD app to add metadata for a method or setup. Here the recording type should first be selected. Metadata can then be added specifically for that recording type. Since more than one investigator may be using a particular setup or method, this makes it possible to share and copy metadata.
 
