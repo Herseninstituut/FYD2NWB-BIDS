@@ -26,9 +26,9 @@ Download FYD-Matlab and FYD2NWB-BIDS from [github.com/Herseninstituut](https://g
 Try to run _set_todo.m_ in steps in matlab.
 This script adds additional paths and makes a connection using Datajoint to the FYD database. Once a valid connection is established with your lab's database you can start retrieving metadata.
 
-Calling _getMetadata_ with a sessionid will collect all metadata associated with that particular session and provide feedback about missing metadata that needs to be provided before the data conversion can take place.  
+Validate your metadata by calling _getMetadata_ with a sessionid. This will collect all metadata associated with a particular session and provide feedback about missing metadata that needs to be added before the data conversion can take place.  
 
-Importantly you will need to provide metadata about the recording system used which is associated with a setup where the data was recorded. Enter this metadata in the setup tab on the FYD webapp. See further instructions for adding metadata [HERE](https://github.com/Herseninstituut/NINwb/blob/main/adding_metadata.md).  
+Importantly you will need to provide metadata about the recording system used which is associated with a setup where the data was recorded. Enter this metadata in the setup tab on the FYD webapp. See further instructions for adding metadata [HERE](https://github.com/Herseninstituut/FYD2NWB-BIDS/blob/main/adding_metadata.md).  
 
 At the time of writing, only two types of recording systems are supported: electrophysiology (ephys) and optical physiology (ophys), and we are looking for enthusiasts who would like to extend our service to other disciplines.
 
@@ -38,7 +38,23 @@ To view the status of the session conversion open the [nwblog](https://nhi-fyd.n
 
 To check whether your NWB file is valid, try to open it and retrieve data. Here is an example script for optical physiology: _read_ophys_nwb.mlx_
 
-You may also like to do the conversion yourself. You can test whether it works by running convert2nwb with the sessionid of your choice. See [extra requirements](https://github.com/Herseninstituut/NINwb/blob/main/requirements.md).
+You may also like to do the conversion yourself. You can test whether it works by running convert2nwb with the sessionid of your choice. 
+
+##### Basic requirements for NWB conversion;
+1.  These routines exploit FYD, so every experiment in your dataset requires a _session.json file tag, to make it findable and machine readable.
+
+2.  Install the Datajoint toolbox for matlab :  In matlab => APPs => Get More APPS => search for Datajoint => ADD Datajoint as Addon.
+3. Get a credentials mfile to access the database (You can get these from Chris van der Togt).
+
+Using Datajoint makes interacting with a MYSQL database very easy. For example, we have a database named 'bids' with a table named 'Channels'. Simply displaying it's contents can be done by typing `bids.Channels` in your matlab workspace.  
+To get info on the fields in the table, simply type `describe(bids.Channels)`.  
+For further usage, see the example scripts.
+
+*In princple the conversion service will do the actual conversion to nwb files, so you will not need extra software. However, if you plan to run the converiosn scripts yourself the following is also required.*
+
+4. Have a current version of matnwb (https://github.com/NeurodataWithoutBorders/matnwb) available on your Matlab path. Also ensure that you have correctly initialized the matnwb library (see the matnwb page for details).
+
+5. Have the SDK's for whichever data format types you wish to convert from. Have them in the same directory as the path for this repo for greatest convenience. e.g., if ~\Github\nin_nwb_converter, then have ~\Github\NPMK)
 
 ### Converting to BIDS
 The routine to convert a dataset into BIDS involves: 
@@ -69,19 +85,6 @@ There is an __Examples_BIDS_Datajoint__ mfile that illustrates how you generate 
 Different recording techniques require different metadata. This is now supported in FYD! To register what type of recording technique you are using, select a BIDS type (ephys, ophys, fMRI) in the **setup tab** on the FYD Webapp's editing interface and then press `(EDIT BIDS INPUT)`. BIDS meta data for a particular recording type can be entered here. This entry can later be used to generate an __(ephys, ophys or fMRI).json__ file that needs to be saved with each session in your BIDS dataset. Since different users may use the same setup, the great thing is, they can all make use of this same entry when they generate their own BIDS dataset.
 
 Based on their recording_type two example subroutines have been included; one for electrophysiology and one for 2photon data.
-
-#### REQUIREMENTS  
-1.  **These routines exploit FYD, so every experiment in your dataset requires a _session.json file tag, to make it findable and machine readable. In most cases, this is already true for NIN datasets.**
-
-2.  Install the Datajoint toolbox for matlab :  
-In matlab => APPs => Get More APPS => search for Datajoint => ADD Datajoint as Addon.
-
-Using Datajoint makes interacting with a MYSQL database a breeze. For example, we have a database named 'bids' with a table named 'Channels'. Simply displaying it's contents can be done by typing `bids.Channels` in your matlab workspace.  
-To get info on the fields in the table, simply type `describe(bids.Channels)`. For further usage, see the example scripts.
-  
-3.  Adapt the Datajoint templates in the `DJ/+yourlab` folder to access tables in your labs FYD database.  
-Get a credentials mfile to access the database and adapt the initDJ function. 
-You can get these from Chris van der Togt.
 
 #### TO-DO
 
