@@ -1,7 +1,7 @@
 # FYD2NWB-BIDS  
-The conversion routine presented here, helps users to convert data from proprietry formats to NWB files. This can be followed by an automated step to organize whole datasets in compliance with the BIDS schema.
+The conversion routine presented here, helps users to convert data from proprietry formats to NWB files. This can be followed by an automated step to organize whole datasets in accordance with the BIDS schema.
 
-**NWB** [(Neurodata Without Borders)](https://www.nwb.org/) aims to package data in a standard format that can be accessed with open source tools. This file format has become an international standard for sharing neuroscientific data and is also used by the Allen Brain institute.
+**NWB** [(Neurodata Without Borders)](https://www.nwb.org/) aims to package data in a standard format that can be accessed with open source tools. This file format is becoming an international standard for sharing neuroscientific data and is also used by the Allen Brain institute.
 
 **BIDS** (Brain Imaging Data Structure) aims to introduce a standard schema for folder naming and data organisation (The data itself which may have been recorded in proprietry formats is not converted). The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging. The BIDS conversion script in this repo leaves room for flexibility in terms of data management - while the painful process of reformatting an entire dataset in order to release it after publication, is supported.
 
@@ -9,14 +9,15 @@ Since these two operations require the addition of relevant metadata, the tool r
 FYD_matlab scripts extract metadata from the FYD database thus requiring minimal input from users.
 
 #### Validate your metadata
-Conversion to NWB and BIDS requires adding metadata. The conversion routine can only run successfully if it can retrieve all the data and metadata which are neccessary to create an NWB file. To make sure this is possible, you can run the script ```getMetadata('sessionid')``` with the sessionid of your choice to validate your data and metadata. Once you have verified that your metadata is compliant, you simply register a sessionid to the online conversion todo list and an nwb file automatically appears in the source folder.  
+Conversion to NWB and BIDS therefor requires adding metadata. The conversion routine can only run successfully if it can retrieve all the data and metadata which are neccessary to create an NWB file. To make sure this is possible, you can run the script ```getMetadata('sessionid')``` with the sessionid of your choice to validate the data and metadata of this session. Once you have verified that your metadata is compliant, you simply register a sessionid to the online conversion todo list and an nwb file automatically appears in the source folder.  
 A basic requirement for this service is that each experimental session in a dataset is associated with a ```_session.json``` file in accordance with the principles set out in Follow Your Data ([FYD](https://herseninstituut.sharepoint.com/sites/fyd-doc)).
   
 
 ### Converting to NWB
 Converting session data to NWB files is performed by a service routine that contains various subroutines to convert data from Blackrock, neuropixel, and 2photon imaging files to NWB files. Other propriety formats will follow on your request and with your help.
+
 #### How it works
-The service _get_todos.m_ runs on a server, automatically checks a todo list for new conversion requests and if one has been added creates an NWB file.  You need not be concerned with the amount of data that needs to be converted or the time that it takes because it runs independent of your local machine.
+The service _get_todos.m_ runs on a server, automatically checks a todo list for new conversion requests and if one has been added it creates one or more NWB files. You need not be concerned with the amount of data that needs to be converted or the time that it takes because it runs independent of your local machine.
 
 #### Set_todo.m and how to get started
 This script interfaces with the FYD database. For this you will need to install the [Datajoint](https://www.datajoint.com/) toolbox for matlab. See below under requirements how to install Datajoint.
@@ -51,9 +52,9 @@ You may also like to do the conversion yourself. You can test whether it works b
 
 Using Datajoint makes interacting with a MYSQL database very easy. For example, we have a database named 'bids' with a table named 'Channels'. Simply displaying it's contents can be done by typing `bids.Channels` in your matlab workspace.  
 To get info on the fields in the table, simply type `describe(bids.Channels)`.  
-For further usage, see the example scripts.
+For further usage, see the example scripts in FYD_Matlab\dj.
 
-*In princple the conversion service will do the actual conversion to nwb files, so you will not need extra software. However, if you plan to run the actual conversion script yourself the following is also required.*
+*In princple the conversion service will do the actual conversion to nwb files, so you will not need extra software. However, if you plan to run the conversion script yourself the following is also required.*
 
 4. Have a current version of matnwb (https://github.com/NeurodataWithoutBorders/matnwb) available on your Matlab path. Also ensure that you have correctly initialized the matnwb library (see the matnwb page for details).
 
