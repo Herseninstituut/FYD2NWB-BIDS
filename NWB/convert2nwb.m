@@ -68,6 +68,7 @@ nwb.general_experiment_description  = char(task.task_description);
 nwb.session_start_time              = sess.date;
 nwb.general_session_id              = sess.sessionid;
 nwb.general_stimulus                = sess.stimulus;
+nwb.general_keywords                = sess.project;
 nwb.identifier                      = append('sub-', char(sess.subject), '_ses-', char(sess.date), '_exp-', char(sess.stimulus));
 
 
@@ -97,7 +98,8 @@ general_subject = types.core.Subject( ...
     'species',          char(subject.species), ...
     'strain',           char(subject.strain), ...
     'subject_id',       char(subject.subjectid), ...
-    'weight',           char(subject.weight)   );                                   
+    'weight',           char(subject.weight), ...
+    'description',      char(subject.shortdescr) );                                   
 
 nwb.general_subject = general_subject;
 
