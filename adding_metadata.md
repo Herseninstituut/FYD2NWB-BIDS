@@ -1,19 +1,18 @@
 ## Adding Metadata
 #### Intro  
-The general procedure followed by the NINwb tool is done in three steps. It first starts by extracting metadata from the FYD database and local logfiles, and then uses this to fill matlab structures generated from YAML files. The YAML files comply with BIDS and NWB metadata standards. These two steps help to maintain flexibility under changing requirements for metadata standards. The matlab structures created this way are then used to create metadata for the converted output.
+The converion routines first start by extracting metadata from the FYD database and local logfiles, and then use this to fill matlab structures generated from YAML files. The YAML files comply with BIDS and NWB metadata standards. These two steps help to maintain flexibility under changing requirements for metadata standards. The matlab structures created this way are then used to create metadata for the converted output.
 
 You can see examples of yaml files in the YAML folder of the FYD repository. YAML files are easy to write and contain comments to explain what the data fields mean. They can be viewed and edited both in the matlab and Visual Studio Code editor, read and converted in python and matlab. 
 
 #### Metadata management
-Metadata is not a single entity, a simple list of attributes to add to a dataset. Metadata constitutes a spectrum from general documentation that is valid over a whole dataset to details that are valid only within a single experiment. 
-
-Much of the metadata that is needed for generating NWB files and formatting data in accordance with BIDS can be obtained from the FYD database and edited through the [FYD webapp](https://nhi-fyd.nin.nl/#/loginvw). The FYD database encapsulates as much metadata as possible, but general enough to be usefull for all researchers at the NIN. However, a substantial amount of metadata has to be extracted from log files associated with individual experiments. This is an additional reason why we need different implementations for different recording types, recording systems and preprocessing toolboxes.
+Metadata constitutes a spectrum from general documentation that is valid over a whole dataset to details that are valid only within a single experiment. General metadata can be obtained from the FYD database and edited through the [FYD webapp](https://nhi-fyd.nin.nl/#/loginvw). This metadata should be general enough to be usefull for all researchers at the NIN. 
+However, a substantial amount of metadata has to be extracted from log files associated with individual experiments. This is an additional reason why we need different implementations for different recording types, recording systems and preprocessing toolboxes.
 
 #### FYDapp edit
-Two examples from the FYD edit interface: Subject and Setup are essential metadata entries.
+Two properties from the FYD edit interface; Subject and Setup, are essential metadata entries.
 
-<img src="https://github.com/Herseninstituut/FYD2NWB-BIDS/blob/main/images/subject.png" >
-<img src="https://github.com/Herseninstituut/FYD2NWB-BIDS/blob/main/images/setup.png" >
+<img src="/images/subject.png" >
+<img src="/images/setup.png" >
 
 The lower image shows the interface in the FYD app to add metadata for a method or setup. Here the recording type should first be selected. Metadata can then be added specifically for that recording type. Since more than one investigator may be using a particular setup or method, this makes it possible to share and copy metadata.
 

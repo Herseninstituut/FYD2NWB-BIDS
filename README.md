@@ -1,28 +1,29 @@
 # FYD2NWB-BIDS  
-The conversion routine presented here, helps users to convert data from proprietry formats to NWB files. This can be followed by an automated step to organize whole datasets in accordance with the BIDS schema.
 
-**NWB** [(Neurodata Without Borders)](https://www.nwb.org/) aims to package data in a standard format that can be accessed with open source tools. This file format is becoming an international standard for sharing neuroscientific data and is also used by the Allen Brain institute.
+Within the international neuroscience community there are two main standard formats NWB and BIDS.
 
-**BIDS** (Brain Imaging Data Structure) aims to introduce a standard schema for folder naming and data organisation (The data itself which may have been recorded in proprietry formats is not converted). The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging. The BIDS conversion script in this repo leaves room for flexibility in terms of data management - while the painful process of reformatting an entire dataset in order to release it after publication, is supported.
+**NWB** [(Neurodata Without Borders)](https://www.nwb.org/) converts data from proprietry formats to a standard format (basically HDF5) that can be accessed with open source tools. This file format is becoming an international standard for sharing neuroscientific data and is also used by the Allen Brain institute.
 
-Since these two operations require the addition of relevant metadata, the tool relies heavily on metadata stored in the FYD (Follow Your Data) system.
-FYD_matlab scripts extract metadata from the FYD database thus requiring minimal input from users.
+**BIDS** (Brain Imaging Data Structure) introduces a standard schema for folder naming and data organisation (The data itself which may have been recorded in proprietry formats is not converted). The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging. 
+
+Since NWB and BIDS have different aims, they can be combined. Data should first be packaged per session in NWB files and once this has been done, a dataset with multiple NWB files can be organized within a BIDS compliant folder structure with neccessary metadata files. These datasets can now be published and shared with the neurosicence community.
+
+Since these two operations require the addition of relevant metadata, the conversion tools in this repo rely heavily on metadata stored in the FYD (Follow Your Data) system. Metadata about methods and setups can be reused to create new compliant datasets. FYD_matlab scripts extract metadata from the FYD database, thus requiring minimal input from users.
 
 #### Validate your metadata
-Conversion to NWB and BIDS therefor requires adding metadata. The conversion routine can only run successfully if it can retrieve all the data and metadata which are neccessary to create an NWB file. To make sure this is possible, you can run the script ```getMetadata('sessionid')``` with the sessionid of your choice to validate the data and metadata of this session. Once you have verified that your metadata is compliant, you simply register a sessionid to the online conversion todo list and an nwb file automatically appears in the source folder.  
+Before you can start converting data to NWB and BIDS, it is important to validate whether the required metadata exists. The conversion routine can only run successfully if it can retrieve all the neccessary data and metadata to create an NWB file and the BIDS folder structure. For this purpose, you can run the script ```getMetadata('sessionid')``` to validate a particular session.   
 A basic requirement for this service is that each experimental session in a dataset is associated with a ```_session.json``` file in accordance with the principles set out in Follow Your Data ([FYD](https://herseninstituut.sharepoint.com/sites/fyd-doc)).
   
 
 ### Converting to NWB
-Converting session data to NWB files is performed by a service routine that contains various subroutines to convert data from Blackrock, neuropixel, and 2photon imaging files to NWB files. Other propriety formats will follow on your request and with your help.
-
-#### How it works
-The service _get_todos.m_ runs on a server, automatically checks a todo list for new conversion requests and if one has been added it creates one or more NWB files. You need not be concerned with the amount of data that needs to be converted or the time that it takes because it runs independent of your local machine.
+Once you have verified that your metadata is compliant, you simply register a sessionid to the online conversion todo list and an nwb file automatically appears in the source folder.
+Converting session data to NWB files is performed by a service routine that calls various subroutines to convert data from Blackrock, neuropixel, and 2photon imaging files to NWB files. Other propriety formats will follow on request and possibly with your help. 
+The service _get_todos.m_ runs on a server and automatically checks a todo list for new conversion requests. If one has been added it creates one or more NWB files appropriate for a particular setup. You need not be concerned with the amount of data that needs to be converted or the time that it takes because it runs independent of your local machine.
 
 #### Set_todo.m and how to get started
-This script interfaces with the FYD database. For this you will need to install the [Datajoint](https://www.datajoint.com/) toolbox for matlab. See below under requirements how to install Datajoint.
+This script interfaces with the FYD database. For this you will need to install the [Datajoint](https://www.datajoint.com/) toolbox for matlab. See FYD-Matlab on how to install Datajoint.
 
-To connect with the FYD database you will also require a credentials file, which contains a username, a password and the name of your lab's database. You can obtain this mfile from the NIN data manager. These files have a comman format; __nhi_fyd_LABparms.m__ (LAB is the abbreviation of your lab like MVP, VandC, etc.).
+To connect with the FYD database you will also need a credentials file, which contains a username, a password and the name of your lab's database. You can obtain this mfile from the NIN data manager. These files have a comman format; __nhi_fyd_LABparms.m__ (LAB is the abbreviation of your lab like MVP, VandC, etc.).
 
 Download FYD-Matlab and FYD2NWB-BIDS from [github.com/Herseninstituut](https://github.com/Herseninstituut) and save to folders that you can add to your matlab path. 
 
