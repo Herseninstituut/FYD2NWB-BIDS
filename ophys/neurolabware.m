@@ -123,15 +123,19 @@ if isfile([fnNormcorr '.sbx'])
         end   
         if ismember('pupil', variableInfo)
             fm = load(path_facemap, 'pupil');
-            pupil = fm.pupil{1};
-            eye_pos = pupil.com_smooth;
-            eye_area = pupil.area_smooth(:);
-            ln = length(FrameTimes(:));
-            if ln ~= length(eye_area)
-                disp("WARNING: Pupil recording length differs from number of frames. Will not be excported!!")
-            else   
-                struct_eye = struct('time', FrameTimes(:), 'Pos', eye_pos(1:ln,:), 'Area', eye_area(1:ln));
-                events.pupil_events = struct2table(struct_eye); 
+            if ~isempty(fm.pupil)
+                pupil = fm.pupil{1};
+                eye_pos = pupil.com_smooth;
+                eye_area = pupil.area_smooth(:);
+                ln = length(FrameTimes(:));
+                if ln ~= length(eye_area)
+                    disp("WARNING: Pupil recording length differs from number of frames. Will not be excported!!")
+                else   
+                    struct_eye = struct('time', FrameTimes(:), 'Pos', eye_pos(1:ln,:), 'Area', eye_area(1:ln));
+                    events.pupil_events = struct2table(struct_eye); 
+                end
+            else
+                disp("WARNING: No pupil recording in facemap file.")
             end
         else
             disp("WARNING: No pupil recording in facemap file.")

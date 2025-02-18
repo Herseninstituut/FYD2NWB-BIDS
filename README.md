@@ -1,14 +1,15 @@
 # FYD2NWB-BIDS  
 
+When you publish a dataset it is highly recommended to convert data to an internationally accepted format. This toolbox, which is still under construction, can be used for this purpose. If you would like to help with it's development please contact us.
 Within the international neuroscience community there are two main standard formats NWB and BIDS.
 
-**NWB** [(Neurodata Without Borders)](https://www.nwb.org/) converts data from proprietry formats to a standard format (basically HDF5) that can be accessed with open source tools. This file format is becoming an international standard for sharing neuroscientific data and is also used by the Allen Brain institute.
+**NWB** [(Neurodata Without Borders)](https://www.nwb.org/) converts and packages data from proprietry formats to a standard format (basically HDF5) that can be accessed with open source tools. This file format is becoming an international standard for sharing neuroscientific data and is also used by the Allen Brain institute.
 
 **BIDS** (Brain Imaging Data Structure) introduces a standard schema for folder naming and data organisation (The data itself which may have been recorded in proprietry formats is not converted). The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging. 
 
-Since NWB and BIDS have different aims, they can be combined. Data should first be packaged per session in NWB files and once this has been done, a dataset with multiple NWB files can be organized within a BIDS compliant folder structure with neccessary metadata files. These datasets can now be published and shared with the neurosicence community.
+Since NWB and BIDS foramt data and metadata different level, they can be combined. Here we assume that data is first packaged per session in NWB files and once this has been done, a dataset with multiple NWB files can be organized within a BIDS compliant folder structure, with the addition of neccessary metadata files. In this format datasets can be published and shared with the neurosicence community.
 
-Since these two operations require the addition of relevant metadata, the conversion tools in this repo rely heavily on metadata stored in the FYD (Follow Your Data) system. Metadata about methods and setups can be reused to create new compliant datasets. FYD_matlab scripts extract metadata from the FYD database, thus requiring minimal input from users.
+Since these two operations require the addition of metadata, the conversion tools in this repo rely heavily on metadata stored in the FYD (Follow Your Data) system. Metadata about methods and setups can be reused to create new compliant datasets. FYD_matlab scripts extract metadata from the FYD database, thus requiring minimal input from users.
 
 #### Validate your metadata
 Before you can start converting data to NWB and BIDS, it is important to validate whether the required metadata exists. The conversion routine can only run successfully if it can retrieve all the neccessary data and metadata to create an NWB file and the BIDS folder structure. For this purpose, you can run the script ```getMetadata('sessionid')``` to validate a particular session.   
@@ -17,7 +18,7 @@ A basic requirement for this service is that each experimental session in a data
 
 ### Converting to NWB
 Once you have verified that your metadata is compliant, you simply register a sessionid to the online conversion todo list and an nwb file automatically appears in the source folder.
-Converting session data to NWB files is performed by a service routine that calls various subroutines to convert data from Blackrock, neuropixel, and 2photon imaging files to NWB files. Other propriety formats will follow on request and possibly with your help. 
+Converting session data to NWB files is performed by a service routine that calls various subroutines specific for Blackrock, neuropixel, and 2photon imaging files. Other propriety formats will follow on request and with your help. 
 The service _get_todos.m_ runs on a server and automatically checks a todo list for new conversion requests. If one has been added it creates one or more NWB files appropriate for a particular setup. You need not be concerned with the amount of data that needs to be converted or the time that it takes because it runs independent of your local machine.
 
 #### Set_todo.m and how to get started
@@ -53,7 +54,7 @@ You may also like to do the conversion yourself. You can test whether it works b
 
 Using Datajoint makes interacting with a MYSQL database very easy. For example, we have a database named 'bids' with a table named 'Channels'. Simply displaying it's contents can be done by typing `bids.Channels` in your matlab workspace.  
 To get info on the fields in the table, simply type `describe(bids.Channels)`.  
-For further usage, see the example scripts in FYD_Matlab\dj.
+For further usage, see the example scripts in FYD_Matlab\dj and below the info about datajoint in converting to BIDS.
 
 *In princple the conversion service will do the actual conversion to nwb files, so you will not need extra software. However, if you plan to run the conversion script yourself the following is also required.*
 
@@ -68,17 +69,18 @@ The routine to convert a dataset into BIDS involves:
 2. copying and changing the names of your data files (automatically)
 3. generating metadata to accompany the data in the form of json sidecar files and tables in tab separated value format (.tsv) (both automatically and with minimal input from users) [See BIDS Specification](https://bids.neuroimaging.io/specification.html)   
 
-
-Below, you can find a short description of the requirments.
-
-The only input required by NIN users concerns some of the BIDS metadata related to the recording equipment. For Electrophysiology, BIDS specifies various tsv files: 
-channels.tsv, electrodes,tsv, probes.tsv, events.tsv, subjects.tsv
-When you validate your metadata (see above) these files have to be present!!
+The main input required by NIN users concerns BIDS metadata related to the recording equipment. For Electrophysiology, BIDS specifies various tsv files: channels.tsv, electrodes,tsv, probes.tsv, events.tsv, subjects.tsv
+**Validate your metadata (see above) to check whether these files are present!!**
 
 To help users understand what needs to be stored in these files, we provide "yaml" template files, with explanatory comments to show the required and recommended fields that need to be provided to succesfully meet the requirments of the official BIDS metadata schema.
 With `` yaml.loadFile(filename) `` the yaml files can be converted to a matlab data structure and used to create structure arrays. Later these can be converted and exported to tsv spreadsheet files or json files. The yaml files can easily be adapted by commenting out the fields you don't need or that are not applicable to your data. *(See FYD_Matlab\YAML)*
 
-The routines developed here for converting your data rely heavily on the use of the Datajoint toolbox, which you can install as an addon in matlab (See above for instructions). The nice thing about Datajoint is that it makes it super easy to interact with a MSQL database server. This applies to both retrieving data, as well as adding and updating data in various tables.
+#### Getting started
+Based on their recording_type two example subroutines have been included; one for electrophysiology and one for 2photon data.
+```dataset2bids.mlx```
+
+#### Datajoint
+The routines developed here for converting your data rely heavily on the use of the Datajoint toolbox, which you can install as an addon in matlab (See above for instructions). The nice thing about Datajoint is that it makes it super easy to interact with a MSQL database server. This applies to both retrieving data, as well as adding and updating data in various tables. (see also FYD-Matlab)
 [Datajoint Documentation](https://datajoint.github.io/datajoint-docs-original/matlab/)
 
 The main routine that provides a starting point and example is `` dataset2bids.m ``. As you can see, basic metadata can be directly retrieved from the FYD database using Datajoint. Other metadata details that need to be included may either be generated from log files you save with your experiments or metadata that you have saved (or created) separately. These concern specific features related to the methods you are using. If you have first converted your data to NWB files this metadata should already have been generated and the NWB files will be simply copied to the BIDS dataset and renamed. 
@@ -89,7 +91,6 @@ There is an __Examples_BIDS_Datajoint__ mfile that illustrates how you generate 
 
 Different recording techniques require different metadata. This is now supported in FYD! To register what type of recording technique you are using, select a BIDS type (ephys, ophys, fMRI) in the **setup tab** on the FYD Webapp's editing interface and then press `(EDIT BIDS INPUT)`. BIDS meta data for a particular recording type can be entered here. This entry can later be used to generate an __(ephys, ophys or fMRI).json__ file that needs to be saved with each session in your BIDS dataset. Since different users may use the same setup, the great thing is, they can all make use of this same entry when they generate their own BIDS dataset.
 
-Based on their recording_type two example subroutines have been included; one for electrophysiology and one for 2photon data.
 
 #### TO-DO
 

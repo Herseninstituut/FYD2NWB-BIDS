@@ -1,9 +1,17 @@
 function Sess = gen_ophys_bids(md, dataset_folder)
        
         sess_meta = md.sess_meta;
-        ophys = md.ophys;
         % create to add to sessions tsv output table
         Sess = struct('sessionid', sess_meta.sessionid, 'session_quality', [], 'number_of_trials', [], 'comment', []);
+
+        if isfield(md, 'ophys')
+            ophys = md.ophys;
+        else
+            waitfor(errordlg('Metadata incomplete, aborting'));
+            Sess.comment = 'Metadata incomplete';
+            return
+        end
+
   
         %To create the bids compliant hierarchy of folders
         subject_folder = fullfile(dataset_folder, ['sub-' sess_meta.subject] );
@@ -14,20 +22,35 @@ function Sess = gen_ophys_bids(md, dataset_folder)
         %Create BIDS compliant name
         bids_prenom = fullfile(session_folder, ['sub-' sess_meta.subject '_sess-' sess_meta.sessionid '_task-' sess_meta.stimulus ]);
                 
-        % Instead of copying the raw files, we will simply copy and rename 
-        % the appropriate NWB files which should contain all data assciated with a session!!! 
+        % If NWB files are present, copy them over, they should contain all data assciated with a session!!! 
          searchpath = [sess_meta.url '\' sess_meta.sessionid '*.nwb'];
          filesIn = dir(searchpath);
          if isempty(filesIn)
-             warndlg('no NWB files for this session')
+             fprintf('-----%s-----\n','NO NWB FILES FOR THIS SESSION!')
+             % Okay, just copy all the data files in the session  folder to
+             % the BIDS folder. THIS IS NOT WHAT WE WANT TO ACHIEVE
+             searchpath = [sess_meta.url '\*.*'];
+             filesIn = dir(searchpath);
+             for j = 1:length(filesIn)
+                 if ~filesIn(j).isdir
+                     ext = erase(filesIn(j).name, sess_meta.sessionid); 
+                     fbids = [bids_prenom ext];
+                 %%% THIS IS FOR TESTING ONLY, REPLACE WITH FINAL CODE        
+                    % Creates an empty file!!!!!    
+                        fid = fopen(fbids, 'w');
+                        fclose(fid);
+                    %%%
+                 end
+             end
          else
              for j = 1:length(filesIn)
                 % get remainder of filename + extention without sessionid
                 ext = erase(filesIn(j).name, sess_meta.sessionid); 
                 %create the file and format the filename according to BIDS with
                 %nwb extension
+                
                 fbids = [bids_prenom ext];
-              %  copyfile(fullfile(sess_meta.url,filesIn(j).name), fbids);
+                copyfile(fullfile(sess_meta.url,filesIn(j).name), fbids);
              end
          end
          
@@ -35,7 +58,7 @@ function Sess = gen_ophys_bids(md, dataset_folder)
          EvntTbl = table;
          if isfield(events, 'run_events')
             EvntTbl.time = num2str(events.run_events.time, '%.3f');
-            EvntTbl.run_speed = num2str(events.run_events.speed, '%.1f');
+            EvntTbl.run_speed = num2str(events.run_events.speed, '%.3f');
          end
          if isfield(events, 'pupil_events')
              EvntTbl.time = num2str(events.pupil_events.time, '%.3f');
@@ -48,13 +71,23 @@ function Sess = gen_ophys_bids(md, dataset_folder)
                'Delimiter', '\t');
          
          if isfield(events, 'task_events')
+             
+             task = events.task_events;
              EvntStim = table;
-             EvntStim.time = num2str(events.task_events.time, '%.3f');
-             EvntStim.log = num2str(events.task_events.log);   
+             tblcolnames = task.Properties.VariableNames;
+             if any(ismember(tblcolnames , 'time'))
+                EvntStim.time = num2str(task.time, '%.3f');
+                Sess.number_of_trials = height(EvntStim.time);
+             end
+             if any(ismember(tblcolnames , 'log'))
+                EvntStim.log = num2str(task.log);  
+             end
+             if any(ismember(tblcolnames , 'texture'))
+                 EvntStim.log = num2str((1:length(task.time))'); 
+             end
              writetable(EvntStim, [ bids_prenom '_events_stimulus.tsv'], ...
                    'FileType', 'text', ...
                    'Delimiter', '\t');
-             Sess.number_of_trials = height(EvntStim);
          end
          
           Sess.comment = 'Okay';
