@@ -23,7 +23,7 @@ function Sess = gen_ophys_bids(md, dataset_folder)
         bids_prenom = fullfile(session_folder, ['sub-' sess_meta.subject '_sess-' sess_meta.sessionid '_task-' sess_meta.stimulus ]);
                 
         % If NWB files are present, copy them over, they should contain all data assciated with a session!!! 
-         searchpath = [sess_meta.url '\' sess_meta.sessionid '*.nwb'];
+         searchpath = [sess_meta.url '\*.nwb'];
          filesIn = dir(searchpath);
          if isempty(filesIn)
              fprintf('-----%s-----\n','NO NWB FILES FOR THIS SESSION!')
