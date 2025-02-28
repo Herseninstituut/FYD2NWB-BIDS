@@ -50,7 +50,7 @@ function Sess = gen_ophys_bids(md, dataset_folder)
                 %nwb extension
                 
                 fbids = [bids_prenom ext];
-                copyfile(fullfile(sess_meta.url,filesIn(j).name), fbids);
+                movefile(fullfile(sess_meta.url,filesIn(j).name), fbids);
              end
          end
          
