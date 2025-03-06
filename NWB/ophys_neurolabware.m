@@ -1,5 +1,6 @@
 function ophys_neurolabware(all_meta, nwb, path_nwb, path_nwbaq)
-
+%Transfer of data from neurolabware sbx files and gathered metadata to NWB
+%format
 
             % to obtain extra metadata for a recording we will need to retrieve the sbx file metadata
             % task = all_meta.task_meta;

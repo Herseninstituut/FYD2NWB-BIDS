@@ -1,4 +1,5 @@
 function metadata = neurolabware(filepath, ophys, metadata)
+% Metadata retrieval for neurolabware 2photon micrcroscoop
 
 global info                  
 
