@@ -39,4 +39,4 @@ When you're done creating and editing the channels, press save to save the table
 
  In princple, you can also make these tables yourself directly in matlab or from a spreadsheet. See the YAML files; ephys_probes, ephys_electrodes, ephys_channels. Use these templates to construct matlab structure arrays that can be converted to tables and saved as tsv files. You can also export the channel table from prelch.mlapp, adapt it in Excel, import it again and save it to update the table in the database.
  
- Only a limited number of fields is actually required, so you can construct arrays that fit your needs. These should be uploaded to the bids database on FYD and can be reused over multiple experiments and datasets. The matlab mfile ```Examples_BIDS_Datajoint.m``` shows how this can be done.
+ Only a limited number of fields is actually required, so you can construct arrays that fit your needs. These should be uploaded to the bids database on FYD and can be reused over multiple experiments and datasets. The matlab mfile ```Examples_YAML_Datajoint.m``` shows how this can be done.
