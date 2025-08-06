@@ -3,6 +3,10 @@ function [metadata, Okay] = getMetadata(sessionid)
 % Metadata validator for conversion of data to NWB format
 % This function tries to get all neccessary metadata contained in FYD tables
 % To run this function you will need FYD2NWB-BIDS in your path
+%
+% -------- First insure that this function works! ---------------
+%   initDJ(yourlab)  yourlab = "leveltlab" or "heimellab" or "roelfsemalab", enz.
+% -------
 % Chris van der Togt, 2025
 
 % p = mfilename('fullpath');
