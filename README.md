@@ -7,13 +7,14 @@ Within the international neuroscience community there are two main standard form
 
 **BIDS** (Brain Imaging Data Structure) introduces a standard schema for folder naming and data organisation (The data itself which may have been recorded in proprietry formats is not converted). The BIDS format is a well-known and universally accepted format, that is already the gold-standard for data sharing in human neuroimaging. 
 
-Since NWB and BIDS foramt data and metadata different level, they can be combined. Here we assume that data is first packaged per session in NWB files and once this has been done, a dataset with multiple NWB files can be organized within a BIDS compliant folder structure, with the addition of neccessary metadata files. In this format datasets can be published and shared with the neurosicence community.
+Since NWB actually packages data whereas BIDS creates metadata files within folders following a specific naming convention, they can be combined. Here we take the approach to package data per session in NWB files and then organize a dataset with multiple NWB files into a BIDS compliant folder structure, adding the neccessary metadata files. In this format datasets can be published and shared with the neurosicence community.
 
-Since these two operations require the addition of metadata, the conversion tools in this repo rely heavily on metadata stored in the FYD (Follow Your Data) system. Metadata about methods and setups can be reused to create new compliant datasets. FYD_matlab scripts extract metadata from the FYD database, thus requiring minimal input from users.
+Since both operations require the addition of metadata, the conversion tools in this repo rely heavily on metadata stored in the FYD (Follow Your Data) system. Metadata about methods and setups can be reused to create new compliant datasets. FYD_matlab scripts extract metadata from the FYD database, thus requiring minimal input from users.
 
 #### Validate your metadata
 Before you can start converting data to NWB and BIDS, it is important to validate whether the required metadata exists. The conversion routine can only run successfully if it can retrieve all the neccessary data and metadata to create an NWB file and the BIDS folder structure. For this purpose, you can run the script ```getMetadata('sessionid')``` to validate a particular session.   
 A basic requirement for this service is that each experimental session in a dataset is associated with a ```_session.json``` file in accordance with the principles set out in Follow Your Data ([FYD](https://herseninstituut.sharepoint.com/sites/fyd-doc)).
+To use "getMetadata", Datajoint needs to be installed (see further) and you should verify its usage by running initDJ("yourlab")
   
 
 ### Converting to NWB
